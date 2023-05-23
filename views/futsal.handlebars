@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="/js/limparEscalacao.js"></script>
+    <link rel="stylesheet" href="/css/jogadores.css">
+    <link rel="stylesheet" href="/css/futsal.css">
+    <link rel="stylesheet" href="/css/navbar.css">
+    <link rel="stylesheet" href="/css/delete.css">
+    <title>Futsal - Cartola Champagnat</title>
+</head>
+
+<body>
+    {{#if error}}
+    <script>
+        alert("{{error}}")
+    </script>
+    {{/if}}
+    <div class="navbar">
+        <a href="/">
+            <img class="logo" src="/images/cartola_logo.png" alt="">
+        </a>
+        <a href="/futsal">Futsal</a>
+        <a href="/handebol">Handebol</a>
+        <a href="/basquete">Basquete</a>
+    </div>
+    <div id="side">
+        <img id="delete" src="https://img.icons8.com/ios-filled/500/aaaaaa/delete--v1.png"  onclick="limparEscalacao('futsal')" />
+    </div>
+    <div id="quadra">
+        {{#with jogadores}}
+        <span id="jogadores">
+            {{!-- jogadores: fixo, ala direita e ala esquerda, goleiro e pivô --}}
+            <a href="jogadores/futsal/pivo" class="link-jogador">
+                {{#if pivo}}
+                <div class="jogador" id="pivo"><img class="img-jogador" src="{{pivo.foto}}"></div>
+                {{else}}
+                <div class="jogador" id="pivo"><img class="img-jogador"
+                        src="https://cdn.discordapp.com/attachments/1089033461668515850/1095162087950524637/2854274f-14d6-46a8-9bd9-382a72db6ee3.png">
+                </div>
+                {{/if}}
+            </a>
+            <a href="jogadores/futsal/alaesquerda">
+                {{#if alaesquerda}}
+                <div class="jogador" id="ala-esquerda"><img class="img-jogador" src="{{alaesquerda.foto}}"></div>
+                {{else}}
+                <div class="jogador" id="ala-esquerda"><img class="img-jogador"
+                        src="https://cdn.discordapp.com/attachments/1089033461668515850/1095162087950524637/2854274f-14d6-46a8-9bd9-382a72db6ee3.png">
+                </div>
+                {{/if}}
+            </a>
+            <a href="jogadores/futsal/aladireita" class="link-jogador">
+                {{#if aladireita}}
+                <div class="jogador" id="ala-direita"><img class="img-jogador" src="{{aladireita.foto}}"></div>
+                {{else}}
+                <div class="jogador" id="ala-direita"><img class="img-jogador"
+                        src="https://cdn.discordapp.com/attachments/1089033461668515850/1095162087950524637/2854274f-14d6-46a8-9bd9-382a72db6ee3.png">
+                </div>
+                {{/if}}
+            </a>
+            <a href="jogadores/futsal/fixo" class="link-jogador">
+                {{#if fixo}}
+                <div class="jogador" id="fixo"><img class="img-jogador" src="{{fixo.foto}}"></div>
+                {{else}}
+                <div class="jogador" id="fixo"><img class="img-jogador"
+                        src="https://cdn.discordapp.com/attachments/1089033461668515850/1095162087950524637/2854274f-14d6-46a8-9bd9-382a72db6ee3.png">
+                </div>
+                {{/if}}
+            </a>
+            <a href="jogadores/futsal/goleiro" class="link-jogador">
+                {{#if goleiro}}
+                <div class="jogador" id="goleiro"><img class="img-jogador" src="{{goleiro.foto}}"></div>
+                {{else}}
+                <div class="jogador" id="goleiro"><img class="img-jogador"
+                        src="https://cdn.discordapp.com/attachments/1089033461668515850/1095162087950524637/2854274f-14d6-46a8-9bd9-382a72db6ee3.png">
+                </div>
+                {{/if}}
+            </a>
+        </span>
+        {{/with}}
+        <span id="linhas">
+            <div class="area" id="top-area"></div>
+            <div id="meio-campo"></div>
+            <div id="centro"></div>
+            <div id="circulo"></div>
+            <div class="area" id="bottom-area"></div>
+        </span>
+    </div>
+</body>
+
+
+
+<style>
+    body {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background-color: #525353;
+    }
+
+
+
+
+</style>
+
+</html>

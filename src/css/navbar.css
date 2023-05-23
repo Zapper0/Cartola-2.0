@@ -1,0 +1,23 @@
+
+.navbar {
+    width: 100vw;
+    height: 50px;
+    background-color: #41b1c4;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.navbar a {
+    margin-left: 20px;
+    text-decoration: none;
+    color: #fff;
+}
+
+.logo {
+    width: 50px;
+    height: 50px;
+}

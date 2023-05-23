@@ -1,0 +1,225 @@
+<html style="font-size: 16px;">
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8">
+  <meta name="keywords" content="">
+  <meta name="description" content="">
+  <meta name="page_type" content="np-template-header-footer-from-plugin">
+  <title>Main</title>
+  <link rel="stylesheet" href="../../src/css/nicepage.css" media="screen">
+  <link rel="stylesheet" href="../../src/css/Main.css" media="screen">
+  <script class="u-script" type="text/javascript" src="../../src/js/jquery.js" defer=""></script>
+  <script class="u-script" type="text/javascript" src="../../src/js/nicepage.js" defer=""></script>
+  <meta name="generator" content="Nicepage 4.10.5, nicepage.com">
+  <link id="u-theme-google-font" rel="stylesheet"
+    href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i|Open+Sans:300,300i,400,400i,500,500i,600,600i,700,700i,800,800i">
+
+
+  <script type="application/ld+json">{
+		"@context": "http://schema.org",
+		"@type": "Organization",
+		"name": "",
+		"sameAs": [
+				"https://www.instagram.com/gesfrg/",
+				"tel:+55 (53) 99955-3024",
+				"https://fichavirtualgesf.web.app"
+		]
+}</script>
+  <meta name="theme-color" content="#478ac9">
+  <meta property="og:title" content="Main">
+  <meta property="og:type" content="website">
+</head>
+
+{{#if error}}
+<script>
+  function showError() {
+    alert('{{error}}')
+  }
+</script>
+
+<body class="u-body u-xl-mode" onload="showError()">
+  {{else}}
+
+  <body class="u-body u-xl-mode">
+    {{/if}}
+    <header class="u-clearfix u-custom-color-1 u-header u-header" id="sec-1e7e">
+      <div class="u-clearfix u-sheet u-valign-middle-xs u-sheet-1" style="margin-top: 5%; margin-bottom: -5%">
+        {{!-- <nav class="u-align-left u-menu u-menu-dropdown u-nav-spacing-25 u-offcanvas u-menu-1"
+          data-responsive-from="XL">
+          <div class="menu-collapse">
+            <a class="u-button-style u-nav-link" href="#" style="font-size: calc(1em + 8px);">
+              <svg class="u-svg-link" preserveAspectRatio="xMidYMin slice" viewBox="0 0 302 302" style="">
+                <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-7b92"></use>
+              </svg>
+              <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1"
+                id="svg-7b92" x="0px" y="0px" viewBox="0 0 302 302" style="enable-background:new 0 0 302 302;"
+                xml:space="preserve" class="u-svg-content">
+                <g>
+                  <rect y="36" width="302" height="30"></rect>
+                  <rect y="236" width="302" height="30"></rect>
+                  <rect y="136" width="302" height="30"></rect>
+                </g>
+                <g></g>
+                <g></g>
+                <g></g>
+                <g></g>
+                <g></g>
+                <g></g>
+                <g></g>
+                <g></g>
+                <g></g>
+                <g></g>
+                <g></g>
+                <g></g>
+                <g></g>
+                <g></g>
+                <g></g>
+              </svg>
+            </a>
+          </div>
+          <div class="u-custom-menu u-nav-container">
+            <ul class="u-nav u-unstyled u-nav-1">
+              <li class="u-nav-item"><a
+                  class="u-button-style u-nav-link u-text-active-palette-1-base u-text-hover-palette-2-base"
+                  href="Login.html" style="padding: 10px 20px;">Login</a>
+              </li>
+              <li class="u-nav-item"><a
+                  class="u-button-style u-nav-link u-text-active-palette-1-base u-text-hover-palette-2-base"
+                  href="Main.html" style="padding: 10px 20px;">Main</a>
+              </li>
+              <li class="u-nav-item"><a
+                  class="u-button-style u-nav-link u-text-active-palette-1-base u-text-hover-palette-2-base"
+                  href="Contact.html" style="padding: 10px 20px;">Contact</a>
+              </li>
+            </ul>
+          </div>
+          <div class="u-custom-menu u-nav-container-collapse">
+            <div
+              class="u-align-center u-black u-container-style u-inner-container-layout u-opacity u-opacity-95 u-sidenav">
+              <div class="u-inner-container-layout u-sidenav-overflow">
+                <div class="u-menu-close"></div>
+                <ul class="u-align-center u-nav u-popupmenu-items u-unstyled u-nav-2">
+                  <li class="u-nav-item"><a class="u-button-style u-nav-link" href="Login.html">Login</a>
+                  </li>
+                  <li class="u-nav-item"><a class="u-button-style u-nav-link" href="Main.html">Main</a>
+                  </li>
+                  <li class="u-nav-item"><a class="u-button-style u-nav-link" href="Contact.html">Contact</a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="u-black u-menu-overlay u-opacity u-opacity-70"></div>
+          </div>
+        </nav> --}}
+        <a href="/">
+          <img class="u-image u-image-default u-preserve-proportions u-image-1" alt="" data-image-width="375"
+            data-image-height="375" src="../../src/images/cartola.png">
+        </a>
+        <div class="u-image u-image-circle u-preserve-proportions u-image-2" alt="" data-image-width="512"
+          data-image-height="512" data-href="perfil"></div>
+      </div>
+      <div style="margin-top: -10%;">
+        <p id="timer">
+          <script>
+            console.log('{{horaMercado}}');
+            var horaAtual = Date.now()
+            var horaMercado = new Date(new Date(horaAtual).getFullYear(), new Date(horaAtual).getMonth(), new Date(horaAtual).getDate(), parseInt('{{horaMercado}}'.split(":")[0]), parseInt('{{horaMercado}}'.split(":")[1]))
+            var tempoRestante = horaMercado - horaAtual
+            if({{mercadoAberto}} == false) {
+              document.getElementById('timer').innerHTML = "Mercado fechado"
+            } else if (tempoRestante > 0) {
+              setInterval(function () {
+                document.getElementById('timer').innerHTML = "Tempo até o fechamento do mercado: " + Math.floor(tempoRestante / 1000 / 60 / 60) + ":" + Math.floor(tempoRestante / 1000 / 60 % 60) + ":" + Math.floor(tempoRestante / 1000 % 60)
+                tempoRestante -= 4
+              })
+            } else {
+              document.getElementById('timer').innerHTML = "Mercado fechado"
+            }
+
+          </script>
+        </p>
+      </div>
+    </header>
+    <section class="u-clearfix u-palette-5-base u-section-1" id="sec-e4c8">
+      <div class="u-align-left-xs u-clearfix u-sheet u-sheet-1" style="position: relative; top: 5vh">
+        <img class="u-align-center u-image u-image-round u-preserve-proportions u-radius-25 u-image-1"
+          src="../../src/images/quadra.png" alt="" data-image-width="409" data-image-height="750">
+        <a href="alaesquerda">
+          <img class="u-image u-image-circle u-preserve-proportions u-image-2" src="{{esquema.alaesquerda.foto}}"
+            data-image-width="512" data-image-height="512">
+        </a>
+        <a href="goleiro">
+          <img class="u-image u-image-circle u-preserve-proportions u-image-3" src="{{esquema.goleiro.foto}}" alt=""
+            data-image-width="512" data-image-height="512">
+        </a>
+        <a href="aladireita">
+          <img class="u-align-right-xs u-image u-image-circle u-preserve-proportions u-image-4"
+            src="{{esquema.aladireita.foto}}" alt="" data-image-width="512" data-image-height="512">
+        </a>
+        <a href="pivo">
+          <img class="u-image u-image-circle u-preserve-proportions u-image-5" src="{{esquema.pivo.foto}}" alt=""
+            data-image-width="512" data-image-height="512">
+        </a>
+        <a href="fixo">
+          <img class="u-image u-image-circle u-preserve-proportions u-image-6" src="{{esquema.fixo.foto}}" alt=""
+            data-image-width="512" data-image-height="512">
+        </a>
+      </div>
+    </section>
+
+    <footer class="u-clearfix u-custom-color-1 u-footer" id="sec-7539" style="margin:auto">
+      <div class="u-clearfix u-sheet u-valign-middle u-sheet-1">
+        <div class="u-align-left u-social-icons u-spacing-10 u-social-icons-1">
+          <a class="u-social-url" title="instagram" target="_blank" href="https://www.instagram.com/gesfrg/"><span
+              class="u-icon u-social-icon u-social-instagram u-icon-1"><svg class="u-svg-link"
+                preserveAspectRatio="xMidYMin slice" viewBox="0 0 112 112" style="">
+                <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-f992"></use>
+              </svg><svg class="u-svg-content" viewBox="0 0 112 112" x="0" y="0" id="svg-f992">
+                <circle fill="currentColor" cx="56.1" cy="56.1" r="55"></circle>
+                <path fill="#FFFFFF"
+                  d="M55.9,38.2c-9.9,0-17.9,8-17.9,17.9C38,66,46,74,55.9,74c9.9,0,17.9-8,17.9-17.9C73.8,46.2,65.8,38.2,55.9,38.2
+            z M55.9,66.4c-5.7,0-10.3-4.6-10.3-10.3c-0.1-5.7,4.6-10.3,10.3-10.3c5.7,0,10.3,4.6,10.3,10.3C66.2,61.8,61.6,66.4,55.9,66.4z">
+                </path>
+                <path fill="#FFFFFF"
+                  d="M74.3,33.5c-2.3,0-4.2,1.9-4.2,4.2s1.9,4.2,4.2,4.2s4.2-1.9,4.2-4.2S76.6,33.5,74.3,33.5z"></path>
+                <path fill="#FFFFFF" d="M73.1,21.3H38.6c-9.7,0-17.5,7.9-17.5,17.5v34.5c0,9.7,7.9,17.6,17.5,17.6h34.5c9.7,0,17.5-7.9,17.5-17.5V38.8
+            C90.6,29.1,82.7,21.3,73.1,21.3z M83,73.3c0,5.5-4.5,9.9-9.9,9.9H38.6c-5.5,0-9.9-4.5-9.9-9.9V38.8c0-5.5,4.5-9.9,9.9-9.9h34.5
+            c5.5,0,9.9,4.5,9.9,9.9V73.3z"></path>
+              </svg></span>
+          </a>
+          <a class="u-social-url" target="_blank" data-type="Whatsapp" title="Whatsapp"
+            href="tel:+55 (53) 99955-3024"><span class="u-icon u-social-icon u-social-whatsapp u-icon-2"><svg
+                class="u-svg-link" preserveAspectRatio="xMidYMin slice" viewBox="0 0 112 112" style="">
+                <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-758e"></use>
+              </svg><svg class="u-svg-content" viewBox="0 0 112 112" x="0" y="0" id="svg-758e">
+                <circle fill="currentColor" cx="56.1" cy="56.1" r="55"></circle>
+                <path fill="#FFFFFF" d="M83.8,28.3C77.2,21.7,68.4,18,59,18c-19.3,0-35.1,15.7-35.1,35.1c0,6.2,1.6,12.2,4.7,17.5l-5,18.2L42.2,84
+	c5.1,2.8,10.9,4.3,16.8,4.3h0l0,0c19.3,0,35.1-15.7,35.1-35.1C94.1,43.8,90.5,35,83.8,28.3 M59,82.3L59,82.3
+	c-5.2,0-10.4-1.4-14.9-4.1l-1.1-0.6l-11,2.9L35,69.8l-0.7-1.1c-2.9-4.6-4.5-10-4.5-15.5C29.8,37,42.9,24,59,24
+	c7.8,0,15.1,3,20.6,8.6c5.5,5.5,8.5,12.8,8.5,20.6C88.2,69.2,75.1,82.3,59,82.3 M75,60.5c-0.9-0.4-5.2-2.6-6-2.9
+	c-0.8-0.3-1.4-0.4-2,0.4s-2.3,2.9-2.8,3.4c-0.5,0.6-1,0.7-1.9,0.2c-0.9-0.4-3.7-1.4-7.1-4.4c-2.6-2.3-4.4-5.2-4.9-6.1
+	c-0.5-0.9-0.1-1.4,0.4-1.8c0.4-0.4,0.9-1,1.3-1.5c0.4-0.5,0.6-0.9,0.9-1.5c0.3-0.6,0.1-1.1-0.1-1.5c-0.2-0.4-2-4.8-2.7-6.5
+	c-0.7-1.7-1.4-1.5-2-1.5c-0.5,0-1.1,0-1.7,0c-0.6,0-1.5,0.2-2.3,1.1c-0.8,0.9-3.1,3-3.1,7.3c0,4.3,3.1,8.5,3.6,9.1
+	c0.4,0.6,6.2,9.4,15,13.2c2.1,0.9,3.7,1.4,5,1.8c2.1,0.7,4,0.6,5.5,0.3c1.7-0.3,5.2-2.1,5.9-4.2c0.7-2,0.7-3.8,0.5-4.2
+	C76.5,61.1,75.9,60.9,75,60.5"></path>
+              </svg></span>
+          </a>
+          <a class="u-social-url" target="_blank" data-type="Custom" title="fichavirtual"
+            href="https://fichavirtualgesf.web.app"><span
+              class="u-file-icon u-icon u-social-custom u-social-icon u-icon-3"><img src="../../src/images/1182768.png"
+                alt=""></span>
+          </a>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      if (navigator.userAgent.indexOf('Safari') > -1) {
+        document.getElementById('sec-7539').style.display = 'none'
+      }
+    </script>
+
+  </body>
+
+</html>

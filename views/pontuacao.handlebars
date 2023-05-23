@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/css/form.css">
+  <title>Pontuar</title>
+</head>
+
+<body>
+
+  {{!--
+
+  Futsal:
+  Para os jogadores de linha (fixo, alas e pivô), as ações possíveis são:
+  - Gol - +3 pontos
+  - Assistência - +1 ponto
+  - Falta cometida - -0.5 ponto
+  - Falta sofrida - +0.5 ponto
+  - Cartão amarelo - -1 ponto
+  - Cartão vermelho - -3 pontos
+  - Gol contra - -3 pontos
+  - Gol de pênalti - +3 pontos
+  - Pênalti perdido - -1.5 pontos
+
+  Para os goleiros, as ações possíveis são:
+  - Gol sofrido - -1 ponto
+  - Defesa de pênalti - +3 pontos
+  - Falta cometida - -0.5 ponto
+  - Falta sofrida - +0.5 ponto
+  - Cartão amarelo - -1 ponto
+  - Cartão vermelho - -3 pontos
+  - Gol contra - -3 pontos
+  - Gol de pênalti - +3 pontos
+  - Pênalti perdido - -1.5 pontos
+
+  Além disso, pontuação específica para goleiros e fixos:
+  - Jogo sem sofrer gol - +3 pontos (fixo e goleiro)
+
+  Handebol:
+  Para os jogadores de linha (ponta, armador, meia e pivô), as ações possíveis são:
+  - Gol - +3 pontos
+  - Assistência - +1 ponto
+  - Falta cometida - -0.5 ponto
+  - Falta sofrida - +0.5 ponto
+  - Cartão amarelo - -1 ponto
+  - Cartão vermelho - -3 pontos
+  - Gol contra - -3 pontos
+  - Gol de 7 metros - +3 pontos
+  - 7 metros perdido - -1.5 pontos
+
+  Para os goleiros, as ações possíveis são:
+  - Gol sofrido - -1 ponto
+  - Defesa de 7 metros - +3 pontos
+  - Falta cometida - -0.5 ponto
+  - Falta sofrida - +0.5 ponto
+  - Cartão amarelo - -1 ponto
+  - Cartão vermelho - -3 pontos
+  - Gol contra - -3 pontos
+  - Gol de 7 metros - +3 pontos
+  - 7 metros perdido - -1.5 pontos
+
+  Basquete:
+  Para os jogadores de linha, as ações possíveis são:
+  - Cesta de 2 pontos - +2 pontos
+  - Cesta de 3 pontos - +3 pontos
+  - Assistência - +1 ponto
+  - Rebote ofensivo - +1 ponto
+  - Rebote defensivo - +0.5 ponto
+  - Falta cometida - -0.5 ponto
+  - Falta sofrida - +0.5 ponto
+  - Cartão amarelo - -1 ponto
+  - Cartão vermelho - -3 pontos
+
+  --}}
+
+  <form>
+    <h2>Configuração de pontuação dos jogadores</h2>
+    <input type="number" name="jogador" placeholder="Nº de matrícula" id="jogador" required>
+    <select name="esporte" id="esporte" required>
+      <option value="futsal">Futsal</option>
+      <option value="basquete">Basquete</option>
+      <option value="handebol">Handebol</option>
+    </select>
+    <select name="posicao" id="posicao" required>
+      <option value="pivo">Pivô</option>
+      <option value="fixo">Fixo</option>
+      <option value="ala">Ala</option>
+      <option value="goleiro">Goleiro</option>
+    </select>
+    <select name="acao" id="acao" required>
+      <option value="gol">Gol</option>
+      <option value="assistencia">Assistência</option>
+      <option value="falta_cometida">Falta cometida</option>
+      <option value="falta_sofrida">Falta sofrida</option>
+      <option value="cartao_amarelo">Cartão amarelo</option>
+      <option value="cartao_vermelho">Cartão vermelho</option>
+      <option value="gol_contra">Gol contra</option>
+      <option value="gol_penalti">Gol de pênalti</option>
+      <option value="penalti_perdido">Pênalti perdido</option>
+    </select>
+
+    <input type="submit" value="Pontuar">
+
+    <a onclick="javascript:history.back()">Voltar</a>
+  </form>
+</body>
+
+<script>
+  var jogador = document.querySelector('#jogador')
+  var esporte = document.querySelector('#esporte')
+  var posicao = document.querySelector('#posicao')
+  var acao = document.querySelector('#acao')
+  var botao = document.querySelector('input[type="submit"]')
+
+  const pontuacoes = {
+    futsal: {
+      gol: 3,
+      assistencia: 1,
+      falta_cometida: -0.5,
+      falta_sofrida: 0.5,
+      cartao_amarelo: -1,
+      cartao_vermelho: -3,
+      gol_contra: -3,
+      gol_penalti: 3,
+      penalti_perdido: -1.5,
+      defesa_penalti: 3,
+      gol_sofrido: -1,
+      jogo_sem_sofrer_gol: 3
+    },
+    handebol: {
+      gol: 3,
+      assistencia: 1,
+      falta_cometida: -0.5,
+      falta_sofrida: 0.5,
+      cartao_amarelo: -1,
+      cartao_vermelho: -3,
+      gol_contra: -3,
+      gol_7_metros: 3,
+      sete_metros_perdido: -1.5,
+      defesa_7_metros: 3,
+      gol_sofrido: -1,
+      jogo_sem_sofrer_gol: 3
+    },
+    basquete: {
+      cesta_2_pontos: 2,
+      cesta_3_pontos: 3,
+      assistencia: 1,
+      rebote_ofensivo: 1,
+      rebote_defensivo: 0.5,
+      falta_cometida: -0.5,
+      falta_sofrida: 0.5,
+      cartao_amarelo: -1,
+      cartao_vermelho: -3
+    }
+  }
+
+
+  function pontuar() {
+    if (!jogador.value || !esporte.value || !posicao.value || !acao.value) {
+      alert('Preencha todos os campos!')
+      return
+    }
+    fetch('/pontuacao', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        matricula: jogador.value,
+        esporte: esporte.value,
+        posicao: posicao.value,
+        acao: acao.value,
+        pontos: pontuacoes[esporte.value][acao.value],
+        data: Date.now()
+      })
+    }).then(function (response) {
+      console.log(response)
+      if (response.redirected) {
+        alert('Você não fez Login! Faça login para configurar pontuações.')
+        window.location.href = '/login'
+      }
+    }).then(function (data) {
+      console.log(data)
+      if(data.success){
+        alert('Pontuação adicionada com sucesso!')
+      }
+    })
+  }
+  
+  botao.addEventListener('click', function (e) {
+    e.preventDefault()
+    pontuar()
+  })
+
+  //trocar as opções de acao de acordo com o esporte e a posição
+  esporte.addEventListener('change', () => {
+    
+  })
+
+</script>
+
+</html>

@@ -1,0 +1,143 @@
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #525353;
+}
+
+form {
+    position: relative;
+    font-family: Arial, Helvetica, sans-serif;
+    transform: translate(0, 5vh);
+    border-radius: 5px;
+    height: 75vh;
+    width: 85vw;
+    background-color: #0b0b63;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+[type="submit"] {
+    width: 50%;
+    height: 2em;
+    margin-top: 0.5em;
+    border-radius: 10px;
+    border: none;
+    background-color: #1212ad;
+    font-size: 1em;
+    color: white;
+}
+
+[type="submit"]:hover {
+    background-color: #0c0c6e;
+    cursor: pointer;
+}
+
+[type="radio"] {
+    width: 1em;
+    height: 1em;
+    border: 0.1px solid #666;
+    background-color: #1212ad;
+    font-size: 1em;
+    color: white;
+}
+
+label {
+    font-size: 1em;
+    color: #fff;
+    margin-top: 1em;
+}
+
+form p {
+    font-size: 1em;
+    color: #fff;
+    margin-top: 1em;
+}
+
+form a {
+    color: #fff;
+    text-decoration: underline;
+}
+
+form a:hover {
+    cursor: pointer;
+    color: #4f4f8d;
+}
+
+form img {
+    width: 130px;
+    height: 130px;
+    border-radius: 15px;
+    margin-bottom: 1em;
+}
+
+input {
+    width: 80%;
+    height: 2em;
+    border-radius: 10px;
+    border: none;
+    background-color: #666;
+    margin: 3px;
+    color: #fff;
+    font-size: 1em;
+}
+
+::placeholder {
+    color: white;
+    padding: 0.7em;
+    font-size: 1em;
+}
+
+.error {
+    z-index: 2;
+    font-family: Arial, Helvetica, sans-serif;
+    position: absolute;
+    top: 5px;
+    height: 10vh;
+    width: 95vw;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #e42323;
+    border-radius: 10px;
+    background-color: #eb464680;
+    font-size: 1em;
+    color: #fff;
+}
+
+select {
+    width: 80%;
+    height: 2em;
+    border-radius: 10px;
+    padding: 5px;
+    border: none;
+    background-color: #666;
+    margin: 3px;
+    padding: 0 0.7em;
+    color: #fff;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 1em;
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+h2 {
+    text-align: center;
+    color: #fff;
+    position: absolute;
+    top: 0;
+}

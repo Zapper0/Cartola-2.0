@@ -1,0 +1,35 @@
+{
+  "name": "cartola-champagnat",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "test": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Zapper0/Cartola-Champagnat.git"
+  },
+  "keywords": [
+    "app",
+    "cartola"
+  ],
+  "author": "Rômulo Tavares Maciel",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Zapper0/Cartola-Champagnat/issues"
+  },
+  "homepage": "https://github.com/Zapper0/Cartola-Champagnat#readme",
+  "dependencies": {
+    "body-parser": "^1.20.0",
+    "connect-flash": "^0.1.1",
+    "express": "^4.18.2",
+    "express-busboy": "^10.0.0",
+    "express-handlebars": "^6.0.6",
+    "express-session": "^1.17.3",
+    "firebase": "^9.8.1",
+    "nodemon": "^2.0.16"
+  },
+  "type": "module"
+}

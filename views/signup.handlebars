@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="css/form.css">
+  <link rel="stylesheet" href="css/footer.css">
+  <title>Login</title>
+</head>
+
+<body>
+  {{#if error}}
+  <div class="error">
+    {{error}}
+  </div>
+  {{/if}}
+
+  <form action="/signup" method="post">
+    <img src="https://cdn.discordapp.com/attachments/1089033461668515850/1095804135766511686/cartola_logo.png" alt="">
+    <input type="text" name="username" placeholder="Nº de matrícula">
+    <input type="password" name="password" placeholder="Senha">
+    <input type="password" name="confirmPassword" placeholder="Confirme a senha">
+    <p>
+      <input type="radio" name="remember" id="remember">
+      Lembrar de mim
+    </p>
+    <button type="submit">Registrar</button>
+    <br>
+    <p>Já tem conta? <a href="/login">Entre aqui</a></p>
+    <a href="/registerplayer">Cadastre-se como jogador</a>
+  </form>
+  <footer>
+    {{!-- instagram, github, whatsapp --}}
+  </footer>
+</body>
+<style>
+</style>
+
+</html>

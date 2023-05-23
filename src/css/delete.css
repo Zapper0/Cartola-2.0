@@ -1,0 +1,23 @@
+#side {
+    z-index: 1;
+    position: fixed;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    border-left-style: hidden;
+    background-color: #41b1c4;
+    width: 60px;
+    height: 50px;
+    border-radius: 70px 0 0 70px;
+    right: 0;
+    top: 80px;
+}
+
+#delete {
+    width: 35px;
+    height: 35px;
+}
+
+#delete:hover {
+    cursor: pointer;
+}

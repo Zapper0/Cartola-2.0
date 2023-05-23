@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/delete.css">
+    <link rel="stylesheet" href="/css/jogadores.css">
+    <link rel="stylesheet" href="/css/navbar.css">
+    <title>Futsal - Cartola Champagnat</title>
+</head>
+
+<body>
+    {{#if error}}
+    <script>
+        alert("{{error}}")
+    </script>
+    {{/if}}
+    <div class="navbar">
+        <a href="/">
+            <img class="logo" src="/images/cartola_logo.png" alt="">
+        </a>
+        <a href="/futsal">Futsal</a>
+        <a href="/handebol">Handebol</a>
+        <a href="/basquete">Basquete</a>
+    </div>
+    <div id="side">
+        <img id="delete" src="https://img.icons8.com/ios-filled/500/aaaaaa/delete--v1.png"  onclick="limparEscalacao('futsal')" />
+    </div>
+    <div id="quadra">
+        {{#with jogadores}}
+        <span id="jogadores">
+            <a href="jogadores/basquete/pivo" class="link-jogador">
+                <div class="jogador" id="pivo"><img src="{{pivo.foto}}" class="img-jogador"></div>
+            </a>
+            <a href="jogadores/basquete/ala">
+                <div class="jogador" id="ala"><img src="{{ala.foto}}" class="img-jogador"></div>
+            </a>
+            <a href="jogadores/basquete/alapivo" class="link-jogador">
+                <div class="jogador" id="ala-pivo"><img src="{{alapivo.foto}}" class="img-jogador"></div>
+            </a>
+            <a href="jogadores/basquete/alaarmador" class="link-jogador">
+                <div class="jogador" id="ala-armador"><img src="{{alaarmador.foto}}" class="img-jogador"></div>
+            </a>
+            <a href="jogadores/basquete/armador" class="link-jogador">
+                <div class="jogador" id="armador"><img src="{{armador.foto}}" class="img-jogador"></div>
+            </a>
+        </span>
+        {{/with}}
+        <span id="linhas">
+            <div class="garrafao" id="garrafao-top"></div>
+            <div class="circulo" id="circulo-top"></div>
+            <div class="tres" id="top-area"></div>
+            <div id="meio-campo"></div>
+            <div id="centro"></div>
+            <div id="circulo"></div>
+            <div class="tres" id="bottom-area"></div>
+            <div class="circulo" id="circulo-bottom"></div>
+            <div class="garrafao" id="garrafao-bottom"></div>
+        </span>
+    </div>
+</body>
+<style>
+    body {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background-color: #525353;
+    }
+
+    #pivo {
+        top: 40%;
+        left: 50%;
+        transform: translate(-50%, 0);
+    }
+
+    #ala {
+        top: 60%;
+        left: 10%;
+        transform: translate(15%, -50%);
+    }
+
+    #ala-pivo {
+        top: 60%;
+        right: 10%;
+        transform: translate(-15%, -50%);
+    }
+
+    #ala-armador {
+        top: 60%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    #armador {
+        top: 70%;
+        left: 50%;
+        transform: translate(-50%, -10%);
+    }
+
+    #quadra {
+        position: absolute;
+        transform: translate(0, 60%);
+        background-color: #0099CC;
+        border: #fff 2px solid;
+        width: 80vw;
+        height: 80vh;
+    }
+
+    #meio-campo {
+        position: absolute;
+        width: 100%;
+        height: 2px;
+        background-color: #fff;
+        top: 50%;
+        transform: translate(0, -50%);
+    }
+
+    #centro {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        border-radius: 100%;
+        background-color: #fff;
+        border: none;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    #circulo {
+        position: absolute;
+        width: 80px;
+        height: 80px;
+        border-radius: 100%;
+        background-color: none;
+        border: 2px solid #fff;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .garrafao {
+        position: absolute;
+        width: 22%;
+        height: 80px;
+        border: 2px solid #fff;
+        left: 50%;
+        transform: translate(-50%, 0);
+    }
+
+    #garrafao-top {
+        top: 0;
+    }
+
+    #garrafao-bottom {
+        bottom: 0;
+    }
+
+    .circulo {
+        position: absolute;
+        width: 22%;
+        padding-top: 22%;
+        border-radius: 100%;
+        border: 2px solid #fff;
+        left: 50%;
+        transform: translate(-50%, 0) rotate(-45deg);
+    }
+
+    #circulo-top {
+        top: 8.5%;
+        border-style: dashed dashed solid solid;
+    }
+
+    #circulo-bottom {
+        bottom: 8.5%;
+        border-style: solid solid dashed dashed;
+    }
+
+    .tres {
+        width: 85%;
+        height: 25%;
+        border: 2px solid #fff;
+        left: 50%;
+        transform: translate(-50%, 0);
+    }
+
+    #top-area {
+        position: absolute;
+        border-top-style: hidden;
+        border-radius: 0 0 130px 130px;
+        top: 0;
+    }
+
+    #bottom-area {
+        position: absolute;
+        border-bottom-style: hidden;
+        border-radius: 130px 130px 0 0;
+        bottom: 0;
+    }
+
+</style>
+
+</html>

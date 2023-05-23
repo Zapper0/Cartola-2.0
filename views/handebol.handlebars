@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="/js/limparEscalacao.js"></script>
+    <link rel="stylesheet" href="/css/jogadores.css">
+    <link rel="stylesheet" href="/css/navbar.css">
+    <link rel="stylesheet" href="/css/delete.css">
+    <title>Handebol - Cartola Champagnat</title>
+</head>
+
+<body>
+    {{#if error}}
+    <script>
+        alert("{{error}}")
+    </script>
+    {{/if}}
+    <div class="navbar">
+        <a href="/">
+            <img class="logo" src="/images/cartola_logo.png" alt="">
+        </a>
+        <a href="/futsal">Futsal</a>
+        <a href="/handebol">Handebol</a>
+        <a href="/basquete">Basquete</a>
+    </div>
+    <div id="side">
+        <img id="delete" src="https://img.icons8.com/ios-filled/500/aaaaaa/delete--v1.png"  onclick="limparEscalacao('futsal')" />
+    </div>
+    <div id="quadra">
+        {{#with jogadores}}
+        <span id="jogadores">
+            <a href="jogadores/handebol/pivo" class="link-jogador">
+                {{#if pivo}}
+                <div class="jogador" id="pivo"><img class="img-jogador" src="{{pivo.foto}}"></div>
+                {{else}}
+                <div class="jogador" id="pivo"><img class="img-jogador"
+                        src="https://cdn.discordapp.com/attachments/1089033461668515850/1095162087950524637/2854274f-14d6-46a8-9bd9-382a72db6ee3.png">
+                </div>
+                {{/if}}
+            </a>
+            <a href="jogadores/handebol/pontaesquerda">
+                {{#if pontaesquerda}}
+                <div class="jogador" id="ponta-esquerda"><img class="img-jogador" src="{{pontaesquerda.foto}}"></div>
+                {{else}}
+                <div class="jogador" id="ponta-esquerda"><img class="img-jogador"
+                        src="https://cdn.discordapp.com/attachments/1089033461668515850/1095162087950524637/2854274f-14d6-46a8-9bd9-382a72db6ee3.png">
+                </div>
+                {{/if}}
+            </a>
+            <a href="jogadores/handebol/pontadireita" class="link-jogador">
+                {{#if pontadireita}}
+                <div class="jogador" id="ponta-direita"><img class="img-jogador" src="{{pontadireita.foto}}"></div>
+                {{else}}
+                <div class="jogador" id="ponta-direita"><img class="img-jogador"
+                        src="https://cdn.discordapp.com/attachments/1089033461668515850/1095162087950524637/2854274f-14d6-46a8-9bd9-382a72db6ee3.png">
+                </div>
+                {{/if}}
+            </a>
+            <a href="jogadores/handebol/meiaesquerda" class="link-jogador">
+                {{#if meiaesquerda}}
+                <div class="jogador" id="meia-esquerda"><img class="img-jogador" src="{{meiaesquerda.foto}}"></div>
+                {{else}}
+                <div class="jogador" id="meia-esquerda"><img class="img-jogador"
+                        src="https://cdn.discordapp.com/attachments/1089033461668515850/1095162087950524637/2854274f-14d6-46a8-9bd9-382a72db6ee3.png">
+                </div>
+                {{/if}}
+            </a>
+            <a href="jogadores/handebol/meiadireita" class="link-jogador">
+                {{#if meiadireita}}
+                <div class="jogador" id="meia-direita"><img class="img-jogador" src="{{meiadireita.foto}}"></div>
+                {{else}}
+                <div class="jogador" id="meia-direita"><img class="img-jogador"
+                        src="https://cdn.discordapp.com/attachments/1089033461668515850/1095162087950524637/2854274f-14d6-46a8-9bd9-382a72db6ee3.png">
+                </div>
+                {{/if}}
+            </a>
+            <a href="jogadores/handebol/armador" class="link-jogador">
+                {{#if armador}}
+                <div class="jogador" id="armador"><img class="img-jogador" src="{{armador.foto}}"></div>
+                {{else}}
+                <div class="jogador" id="armador"><img class="img-jogador"
+                        src="https://cdn.discordapp.com/attachments/1089033461668515850/1095162087950524637/2854274f-14d6-46a8-9bd9-382a72db6ee3.png">
+                </div>
+                {{/if}}
+            </a>
+            <a href="jogadores/handebol/goleiro" class="link-jogador">
+                {{#if goleiro}}
+                <div class="jogador" id="goleiro"><img class="img-jogador" src="{{goleiro.foto}}"></div>
+                {{else}}
+                <div class="jogador" id="goleiro"><img class="img-jogador"
+                        src="https://cdn.discordapp.com/attachments/1089033461668515850/1095162087950524637/2854274f-14d6-46a8-9bd9-382a72db6ee3.png">
+                </div>
+                {{/if}}
+            </a>
+        </span>
+        {{/with}}
+        <span id="linhas">
+            <div class="quatrometros" id="top-4"></div>
+            <div class="area" id="top-area"></div>
+            <div class="area-9" id="top-area-9"></div>
+            <div class="setemetros" id="top-7"></div>
+            <div id="meio-campo"></div>
+            <div id="centro"></div>
+            <div id="circulo"></div>
+            <div class="setemetros" id="bottom-7"></div>
+            <div class="area-9" id="bottom-area-9"></div>
+            <div class="area" id="bottom-area"></div>
+            <div class="quatrometros" id="bottom-4"></div>
+        </span>
+    </div>
+</body>
+<style>
+    body {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background-color: #525353;
+    }
+
+    #pivo {
+        top: 30%;
+        left: 50%;
+        transform: translate(-50%, 0);
+    }
+
+    #ponta-esquerda {
+        top: 40%;
+        left: 0;
+        transform: translate(5%, -50%);
+    }
+
+    #ponta-direita {
+        top: 40%;
+        right: 0;
+        transform: translate(-5%, -50%);
+    }
+
+    #meia-esquerda {
+        top: 45%;
+        left: 27%;
+        transform: translate(-50%, 0);
+    }
+
+    #meia-direita {
+        top: 45%;
+        right: 27%;
+        transform: translate(50%, 0);
+    }
+
+    #armador {
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, 0);
+    }
+
+    #goleiro {
+        bottom: 0;
+        left: 50%;
+        transform: translate(-50%, -10%);
+    }
+
+    #quadra {
+        position: absolute;
+        transform: translate(0, 60%);
+        background-color: #0099CC;
+        border: #fff 2px solid;
+        width: 80vw;
+        height: 80vh;
+    }
+
+    #meio-campo {
+        position: absolute;
+        width: 100%;
+        height: 2px;
+        background-color: #fff;
+        top: 50%;
+        transform: translate(0, -50%);
+    }
+
+    #centro {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        border-radius: 100%;
+        background-color: #fff;
+        border: none;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    #circulo {
+        position: absolute;
+        width: 80px;
+        height: 80px;
+        border-radius: 100%;
+        background-color: none;
+        border: 2px solid #fff;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .setemetros {
+        position: absolute;
+        width: 20px;
+        height: 1px;
+        background-color: #fff;
+        left: 50%;
+        transform: translate(-50%, 0);
+    }
+
+    #top-7 {
+        top: 25%;
+    }
+
+    #bottom-7 {
+        bottom: 25%;
+    }
+
+    .quatrometros {
+        position: absolute;
+        width: 10px;
+        height: 1px;
+        background-color: #fff;
+        left: 50%;
+        transform: translate(-50%, 0);
+        z-index: 1;
+    }
+
+    #top-4 {
+        top: 10%;
+    }
+
+    #bottom-4 {
+        bottom: 10%;
+    }
+
+    #bottom-area-9 {
+        border-bottom-style: hidden;
+        border-radius: 80px 80px 0 0;
+        bottom: 0;
+    }
+
+    #top-area-9 {
+        border-top-style: hidden;
+        border-radius: 0 0 80px 80px;
+        top: 0;
+    }
+
+    .area {
+        left: 50%;
+        width: 70%;
+        height: 15%;
+        position: absolute;
+        border: 2px solid #fff;
+        transform: translate(-50%, 0);
+        background-color: yellowgreen;
+    }
+
+    .area-9 {
+        left: 50%;
+        width: 90%;
+        height: 20%;
+        position: absolute;
+        border: 2px dashed #fff;
+        transform: translate(-50%, 0);
+    }
+
+    #top-area {
+        border-top-style: hidden;
+        border-radius: 0 0 70px 70px;
+        top: 0;
+    }
+
+    #bottom-area {
+        border-bottom-style: hidden;
+        border-radius: 70px 70px 0 0;
+        bottom: 0;
+    }
+</style>
+
+</html>

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cartola Champagnat</title>
+</head>
+
+<body>
+    {{#if error}}
+    <script>
+        alert("{{error}}")
+    </script>
+    {{/if}}
+    {{#if success}}
+    <script>
+        alert("{{success}}")
+    </script>
+    {{/if}}
+    <div class="navbar">
+        <img class="logo" src="/images/cartola_logo.png" alt="">
+        <a href="/futsal">Futsal</a>
+        <a href="/handebol">Handebol</a>
+        <a href="/basquete">Basquete</a>
+    </div>
+    <div class="content">
+        <div class="card" id="mercado">
+            <p>O mercado está aberto, mas fecha em 00:00:00</p>
+        </div>
+        <div class="card" id="times">
+            <p>Você não tem times escalados ainda</p>
+        </div>
+        <div class="card" id="pontos">
+            <p>Você tem 00 pontos</p>
+            <p class="sport-points" id="futsal">00 do Futsal</p>
+            <p class="sport-points" id="basquete">00 do Basquete</p>
+            <p class="sport-points" id="handebol">00 do Handebol</p>
+        </div>
+        {{#if admin}}
+        <div class="card">
+            <p>Comandos exclusivos de administradores</p>
+            <a href="/mercado">Configurar mercado</a>
+            <a href="/pontuacao">Registrar pontuações</a>
+            <a href="/pontuar">Atualizar pontuações</a>
+        </div>
+        {{/if}}
+    </div>
+</body>
+
+<script>
+    var user = {{{ json user }}}
+    var mercado = {{{ json mercado }}}
+    var divMercado = document.getElementById('mercado')
+    divMercado.innerHTML = `<p>O mercado está ${mercado.aberto ? 'aberto' : 'fechado'}, mas 
+        ${mercado.aberto ? 'fecha' : 'abre'} às ${mercado.hora}</p>`
+
+    var divTimes = document.getElementById('times')
+    if (!user.escalacao || user.escalacao.length == 0)
+        divTimes.innerHTML = `<p>Você não tem times escalados ainda.</p>`
+    else {
+        var times = Object.values(user.escalacao)
+        var esportes = Object.keys(user.escalacao)
+        var timesEscalados = ''
+        times.forEach((time, index) => {
+            if (index == times.length - 1)
+                timesEscalados += `${esportes[index]}`
+            else if (index == times.length - 2)
+                timesEscalados += `${esportes[index]} e `
+            else
+                timesEscalados += `${esportes[index]}, `
+        });
+        divTimes.innerHTML = `<p>Você tem times escalados para ${timesEscalados}</p>`
+    }
+</script>
+
+
+<style>
+    body {
+        background-color: #525353;
+        width: 100vw;
+        height: calc(100vh - 50px));
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .card {
+        margin: 10px 0;
+        width: 95%;
+        min-height: 90px;
+        background-color: #424242;
+        border: none;
+        border-radius: 15px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        color: #fff;
+        font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+        font-size: 1.1em;
+    }
+
+    .card p {
+        margin: 10px;
+    }
+
+    .card a {
+        text-decoration: none;
+        text-align: center;
+        color: #fff;
+        padding: 5px;
+        margin: 5px;
+        background-color: #323738;
+        border-radius: 15px;
+    }
+
+    .sport-points {
+        margin: 1px !important;
+        text-indent: 30px;
+    }
+
+    #pontos {
+        align-items: flex-start;
+        padding-bottom: 10px;
+    }
+
+    .content {
+        position: absolute;
+        top: 50px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100vw;
+        height: calc(100vh - 50px);
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+    }
+
+    .navbar {
+        width: 100vw;
+        height: 50px;
+        background-color: #41b1c4;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+
+    .navbar a {
+        margin-left: 20px;
+        text-decoration: none;
+        color: #fff;
+    }
+
+    .logo {
+        width: 50px;
+        height: 50px;
+    }
+</style>
+
+</html>

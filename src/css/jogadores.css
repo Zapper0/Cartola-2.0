@@ -1,0 +1,22 @@
+
+
+.jogador {
+    z-index: 2;
+    position: absolute;
+    width: 55px;
+    height: 55px;
+    border-radius: 100%;
+    background-color: #fff;
+    border: 1px solid #fff;
+}
+
+.link-jogador {
+    width: 55px;
+    height: 55px;
+}
+
+.img-jogador {
+    width: 55px;
+    height: 55px;
+    border-radius: 100%;
+}
