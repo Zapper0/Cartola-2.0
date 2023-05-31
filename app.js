@@ -5,7 +5,7 @@ const flash = require('connect-flash')
 const session = require('express-session')
 const { initializeApp } = require('firebase/app')
 const { getDatabase, ref, set, child, get } = require('firebase/database')
-const { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, browserSessionPersistence, inMemoryPersistence, setPersistence, reauthenticateWithCredential } = require('firebase/auth')
+const { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, browserSessionPersistence, inMemoryPersistence, setPersistence, getIdToken, getIdTokenResult } = require('firebase/auth')
 const { getStorage, uploadBytes, getDownloadURL } = require('firebase/storage')
 const firebaseStorage = require('firebase/storage')
 const refStorage = firebaseStorage.ref()
@@ -208,10 +208,9 @@ app.engine('handlebars', handlebars.engine({
 }))
 app.set('view engine', 'handlebars')
 
-const isAuthenticated = (req, res, next) => {
+const isAuthenticated = async (req, res, next) => {
     const auth = getAuth()
-    const user = auth.currentUser
-
+    const user = req.session.user
     if (user) {
         // O usuário está autenticado
         req.user = user // Armazena o usuário no objeto de solicitação para acesso posterior
@@ -226,197 +225,44 @@ const isAuthenticated = (req, res, next) => {
 
 
 app.get('/', isAuthenticated, async (req, res) => {
-    const user = req.user
+    var user = req.user
     var admin = false
-    if (user) {
-        admins.indexOf(user.uid) > -1 ? admin = true : admin = false
+    admins.indexOf(user.uid) > -1 ? admin = true : admin = false
 
-        console.log(`${admin ? `Admin ${user.uid}` : 'Usuário logado'} acessou /\n`)
-        get(child(ref(db), `users/${user.uid}`)).then((snapshot) => {
-            get(child(ref(db), `mercado`)).then((snapshot_) => {
-                if (snapshot.exists()) {
-                    res.render('main', {
-                        admin: admin,
-                        error: req.flash('error'),
-                        success: req.flash('success'),
-                        user: snapshot.val(), 
-                        mercado: snapshot_.val()
-                    })
-                } else {
-                    res.render('main', {
-                        admin: admin,
-                        error: req.flash('error'),
-                        mercado: snapshot_.val(),
-                        message: `Bem vindo(a) ao Cartola Champagnat!\n\n
-                    Escale seus times e vá pontuando conforme os jogos!\n\n
-                    Fique atento ao mercado, caso queira trocar algum jogador, 
-                    ele precisa estar aberto.\n\nBoa sorte!`
-                    })
-                }
-            }).catch((error) => {
-                console.log('Erro ao buscar dados do mercado', error)
-                req.flash('error', 'Ocorreu algum erro inesperado. Por favor tente logar novamente e, caso o erro persista, contate o suporte.')
-                res.redirect('/login')
-            })
+    console.log(`${admin ? `Admin ${user.uid}` : 'Usuário logado'} acessou /\n`)
+    get(child(ref(db), `users/${user.uid}`)).then((snapshot) => {
+        get(child(ref(db), `mercado`)).then((snapshot_) => {
+            if (snapshot.exists()) {
+                res.render('main', {
+                    admin: admin,
+                    error: req.flash('error'),
+                    success: req.flash('success'),
+                    user: snapshot.val(),
+                    mercado: snapshot_.val()
+                })
+            } else {
+                console.log(snapshot_.val())
+                set(ref(db, `users/${user.uid}/pontos`), 0)
+                res.render('main', {
+                    admin: admin,
+                    error: req.flash('error'),
+                    user: snapshot.val(),
+                    mercado: snapshot_.val(),
+                    message: true
+                })
+            }
         }).catch((error) => {
-            console.log('Erro ao buscar dados do usuário')
+            console.log('Erro ao buscar dados do mercado', error)
             req.flash('error', 'Ocorreu algum erro inesperado. Por favor tente logar novamente e, caso o erro persista, contate o suporte.')
             res.redirect('/login')
         })
-    } else {
-        console.log('Usuário não logado foi redirecionado para /login\n')
+    }).catch((error) => {
+        console.log('Erro ao buscar dados do usuário')
+        req.flash('error', 'Ocorreu algum erro inesperado. Por favor tente logar novamente e, caso o erro persista, contate o suporte.')
         res.redirect('/login')
-    }
+    })
 
-})
 
-app.get('/handebol', async (req, res) => {
-    const auth = getAuth()
-    var user = auth.currentUser
-    if (user) {
-        console.log('Usuário logado acessou /handebol\n')
-        get(child(ref(db), `users/${user.uid}/escalacao/handebol`)).then((snapshot) => {
-            if (snapshot.exists()) {
-                res.render('handebol', { error: req.flash('error'), jogadores: snapshot.val() })
-            } else {
-                res.render('handebol', { error: req.flash('error'), jogadores: defaultSet })
-            }
-        }).catch((error) => {
-            console.log('Erro ao buscar dados')
-            req.flash('error', 'Ocorreu algum erro inesperado, por favor contate o suporte.')
-            res.redirect('/')
-        })
-    } else {
-        console.log('Usuário não logado foi redirecionado para /login\n')
-        res.redirect('/login')
-    }
-})
-
-app.get('/futsal', async (req, res) => {
-    const auth = getAuth()
-    var user = auth.currentUser
-    if (user) {
-        console.log('Usuário logado acessou /futsal\n')
-        get(child(ref(db), `users/${user.uid}/escalacao/futsal`)).then((snapshot) => {
-            if (snapshot.exists()) {
-                res.render('futsal', { error: req.flash('error'), jogadores: snapshot.val() })
-            } else {
-                res.render('futsal', { error: req.flash('error'), jogadores: defaultSet })
-            }
-        }).catch((error) => {
-            console.log('Erro ao buscar dados')
-            req.flash('error', 'Ocorreu algum erro inesperado, por favor contate o suporte.')
-            res.redirect('/');
-        });
-
-    } else {
-        console.log('Usuário não logado foi redirecionado para /login\n')
-        res.redirect('/login')
-    }
-})
-
-app.get('/basquete', async (req, res) => {
-    const auth = getAuth()
-    var user = auth.currentUser
-    if (user) {
-        console.log('Usuário logado acessou /basquete\n')
-        get(child(ref(db), `users/${user.uid}/escalacao/basquete`)).then((snapshot) => {
-            if (snapshot.exists()) {
-                res.render('basquete', { error: req.flash('error'), jogadores: snapshot.val() })
-            } else {
-                res.render('basquete', { error: req.flash('error'), jogadores: defaultSet })
-            }
-        }).catch((error) => {
-            console.log('Erro ao buscar dados')
-            req.flash('error', 'Ocorreu algum erro inesperado, por favor contate o suporte.')
-            res.redirect('/')
-        })
-    } else {
-        console.log('Usuário não logado foi redirecionado para /login\n')
-        res.redirect('/login')
-    }
-})
-
-app.get('/jogadores/:esporte/:posicao', async (req, res) => {
-    const auth = getAuth()
-    var user = auth.currentUser
-    if (user) {
-        console.log(`Usuário logado acessou /jogadores/${req.params.esporte}/${req.params.posicao}\n`)
-        get(child(ref(db), `lista/${req.params.esporte}/${req.params.posicao}`)).then((snapshot) => {
-            if (snapshot.exists()) {
-                console.log('Dados encontrados')
-                res.render('lista', { jogadores: snapshot.val(), esporte: req.params.esporte, posicao: req.params.posicao })
-            } else {
-                console.log('Dados não encontrados')
-                req.flash('error', 'Ainda não há nenhum jogador registrado para esta posição.')
-                res.redirect(`/${req.params.esporte}`);
-            }
-        }).catch((error) => {
-            console.log('Erro ao buscar dados')
-            req.flash('error', 'Ocorreu algum erro inesperado, por favor contate o suporte.')
-            res.redirect('/');
-        });
-    } else {
-        console.log('Usuário não logado foi redirecionado para /login\n')
-        res.redirect('/login')
-    }
-})
-
-app.get('/capitao/:esporte', async (req, res) => {
-    const auth = getAuth()
-    var user = auth.currentUser
-    if (user) {
-        console.log(`Usuário logado acessou /capitao/${req.params.esporte} (GET)\n`)
-        get(child(ref(db), `users/${user.uid}/escalacao/${req.params.esporte}`)).then((snapshot) => {
-            if (snapshot.exists()) {
-                var jogadores = snapshot.val()
-                if (jogadores.capitao) {
-                    delete jogadores.capitao
-                }
-                res.render('capitao', { jogadores: Object.entries(jogadores), esporte: req.params.esporte })
-            } else {
-                req.flash('error', 'Ainda não há nenhum capitão registrado.')
-                res.redirect(`/${req.params.esporte}`);
-            }
-        }).catch((error) => {
-            req.flash('error', 'Ocorreu algum erro inesperado, por favor contate o suporte.')
-            res.redirect('/');
-        });
-    } else {
-        console.log('Usuário não logado foi redirecionado para /login\n')
-        res.redirect('/login')
-    }
-})
-
-app.post('/capitao', async (req, res) => {
-    const auth = getAuth()
-    var user = auth.currentUser
-    if (user) {
-        console.log(`Usuário logado acessou /capitao (POST)\n`)
-        get(child(ref(db), `lista/${req.body.esporte}/${req.body.posicao}/${req.body.matricula}`)).then((snapshot) => {
-            if (snapshot.exists()) {
-                var capitao = snapshot.val()
-                capitao.posicao = req.body.posicao
-                set(ref(db, `users/${user.uid}/escalacao/${req.body.esporte}/capitao`), capitao).then(() => {
-                    console.log('Capitão registrado com sucesso')
-                    req.flash('error', 'Capitão registrado com sucesso')
-                    res.redirect(`/${req.body.esporte}`);
-                }).catch((error) => {
-                    req.flash('error', 'Ocorreu algum erro inesperado, por favor contate o suporte.')
-                    res.redirect(`/${req.body.esporte}`);
-                });
-            } else {
-                req.flash('error', 'Jogador não encontrado.')
-                res.redirect(`/${req.body.esporte}`);
-            }
-        }).catch((error) => {
-            req.flash('error', 'Ocorreu algum erro inesperado, por favor contate o suporte.')
-            res.redirect('/');
-        });
-    } else {
-        console.log('Usuário não logado foi redirecionado para /login\n')
-        res.redirect('/login')
-    }
 })
 
 app.get('/login', async (req, res) => {
@@ -429,7 +275,7 @@ app.post('/login', async (req, res) => {
     var password = req.body.password
     signInWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
-            console.log('Logado')
+            req.session.user = userCredential.user
             res.redirect('/')
         })
         .catch((error) => {
@@ -474,7 +320,8 @@ app.post('/signup', async (req, res) => {
     setPersistence(auth, persistence).then(() => {
         createUserWithEmailAndPassword(auth, email, password)
             .then(() => {
-                res.redirect('/')
+                req.flash('success', 'Usuário criado com sucesso, faça login')
+                res.redirect('/login')
             })
             .catch((error) => {
                 const errorCode = error.code;
@@ -497,6 +344,123 @@ app.post('/signup', async (req, res) => {
     })
 })
 
+app.get('/handebol', isAuthenticated, async (req, res) => {
+    var user = req.user
+    if (user) {
+        console.log('Usuário logado acessou /handebol\n')
+        get(child(ref(db), `users/${user.uid}/escalacao/handebol`)).then((snapshot) => {
+            if (snapshot.exists()) {
+                res.render('handebol', { error: req.flash('error'), jogadores: snapshot.val() })
+            } else {
+                res.render('handebol', { error: req.flash('error'), jogadores: defaultSet })
+            }
+        }).catch((error) => {
+            console.log('Erro ao buscar dados')
+            req.flash('error', 'Ocorreu algum erro inesperado, por favor contate o suporte.')
+            res.redirect('/')
+        })
+    } else {
+        console.log('Usuário não logado foi redirecionado para /login\n')
+        res.redirect('/login')
+    }
+})
+
+app.get('/futsal', isAuthenticated, async (req, res) => {
+    var user = req.user
+    console.log('Usuário logado acessou /futsal\n')
+    get(child(ref(db), `users/${user.uid}/escalacao/futsal`)).then((snapshot) => {
+        if (snapshot.exists()) {
+            res.render('futsal', { error: req.flash('error'), jogadores: snapshot.val() })
+        } else {
+            res.render('futsal', { error: req.flash('error'), jogadores: defaultSet })
+        }
+    }).catch((error) => {
+        console.log('Erro ao buscar dados')
+        req.flash('error', 'Ocorreu algum erro inesperado, por favor contate o suporte.')
+        res.redirect('/');
+    });
+})
+
+app.get('/basquete', isAuthenticated, async (req, res) => {
+    var user = req.user
+    console.log('Usuário logado acessou /basquete\n')
+    get(child(ref(db), `users/${user.uid}/escalacao/basquete`)).then((snapshot) => {
+        if (snapshot.exists()) {
+            res.render('basquete', { error: req.flash('error'), jogadores: snapshot.val() })
+        } else {
+            res.render('basquete', { error: req.flash('error'), jogadores: defaultSet })
+        }
+    }).catch((error) => {
+        console.log('Erro ao buscar dados')
+        req.flash('error', 'Ocorreu algum erro inesperado, por favor contate o suporte.')
+        res.redirect('/')
+    })
+})
+
+app.get('/jogadores/:esporte/:posicao', isAuthenticated, async (req, res) => {
+    var user = req.user
+    console.log(`Usuário logado acessou /jogadores/${req.params.esporte}/${req.params.posicao}\n`)
+    get(child(ref(db), `lista/${req.params.esporte}/${req.params.posicao}`)).then((snapshot) => {
+        if (snapshot.exists()) {
+            console.log('Dados encontrados')
+            res.render('lista', { jogadores: snapshot.val(), esporte: req.params.esporte, posicao: req.params.posicao })
+        } else {
+            console.log('Dados não encontrados')
+            req.flash('error', 'Ainda não há nenhum jogador registrado para esta posição.')
+            res.redirect(`/${req.params.esporte}`);
+        }
+    }).catch((error) => {
+        console.log('Erro ao buscar dados')
+        req.flash('error', 'Ocorreu algum erro inesperado, por favor contate o suporte.')
+        res.redirect('/');
+    });
+})
+
+app.get('/capitao/:esporte', isAuthenticated, async (req, res) => {
+    var user = req.user
+    console.log(`Usuário logado acessou /capitao/${req.params.esporte} (GET)\n`)
+    get(child(ref(db), `users/${user.uid}/escalacao/${req.params.esporte}`)).then((snapshot) => {
+        if (snapshot.exists()) {
+            var jogadores = snapshot.val()
+            if (jogadores.capitao) {
+                delete jogadores.capitao
+            }
+            res.render('capitao', { jogadores: Object.entries(jogadores), esporte: req.params.esporte })
+        } else {
+            req.flash('error', 'Ainda não há nenhum capitão registrado.')
+            res.redirect(`/${req.params.esporte}`);
+        }
+    }).catch((error) => {
+        req.flash('error', 'Ocorreu algum erro inesperado, por favor contate o suporte.')
+        res.redirect('/');
+    });
+})
+
+app.post('/capitao', isAuthenticated, async (req, res) => {
+    var user = req.user
+    console.log(`Usuário logado acessou /capitao (POST)\n`)
+    get(child(ref(db), `lista/${req.body.esporte}/${req.body.posicao}/${req.body.matricula}`)).then((snapshot) => {
+        if (snapshot.exists()) {
+            var capitao = snapshot.val()
+            capitao.posicao = req.body.posicao
+            set(ref(db, `users/${user.uid}/escalacao/${req.body.esporte}/capitao`), capitao).then(() => {
+                console.log('Capitão registrado com sucesso')
+                req.flash('error', 'Capitão registrado com sucesso')
+                res.redirect(`/${req.body.esporte}`);
+            }).catch((error) => {
+                req.flash('error', 'Ocorreu algum erro inesperado, por favor contate o suporte.')
+                res.redirect(`/${req.body.esporte}`);
+            });
+        } else {
+            req.flash('error', 'Jogador não encontrado.')
+            res.redirect(`/${req.body.esporte}`);
+        }
+    }).catch((error) => {
+        req.flash('error', 'Ocorreu algum erro inesperado, por favor contate o suporte.')
+        res.redirect('/');
+    });
+})
+
 app.get('/registerplayer', async (req, res) => {
     res.render('registerplayer')
 })
@@ -511,14 +475,15 @@ app.post('/registerplayer', async (req, res) => {
     var pos = req.body.posicao
     var imagem = req.files.foto
 
-    uploadBytes(refStorage(storage, `${matricula}`), fs.readFileSync(imagem.file)).then((uploadResult) => {
+    uploadBytes(firebaseStorage.ref(storage, `${matricula}`), fs.readFileSync(imagem.file)).then((uploadResult) => {
         getDownloadURL(uploadResult.ref).then((url) => {
             set(ref(db, `jogadores/provisorio/${esporte}/${matricula}`), {
                 nome: nome,
                 numero: numero,
                 equipe: equipe,
                 posicao: pos,
-                foto: url
+                foto: url,
+                matricula: matricula
             }).then(() => {
                 req.flash('error', 'Jogador registrado com sucesso')
                 res.redirect(`/login`);
@@ -536,39 +501,32 @@ app.post('/registerplayer', async (req, res) => {
     })
 })
 
-app.post('/escalar', async (req, res) => {
+app.post('/escalar', isAuthenticated, async (req, res) => {
     get(child(ref(db), 'mercado/aberto')).then((snapshot) => {
         mercadoAberto = snapshot.val()
 
         if (mercadoAberto != false) {
-            const auth = getAuth();
-            const user = auth.currentUser;
-            if (user) {
+            var user = req.user
 
-                console.log('Usuário logado acessou /escalar\n')
+            console.log('Usuário logado acessou /escalar\n')
 
-                const matricula = req.body.matricula;
-                const posicao = req.body.posicao;
-                const esporte = req.body.esporte;
+            const matricula = req.body.matricula;
+            const posicao = req.body.posicao;
+            const esporte = req.body.esporte;
 
-                get(child(ref(db), `lista/${esporte}/${posicao}/${matricula}`)).then((snapshot) => {
+            get(child(ref(db), `lista/${esporte}/${posicao}/${matricula}`)).then((snapshot) => {
 
-                    set(ref(db, `users/${user.uid}/escalacao/${esporte}/${posicao}`), snapshot.val()).then(() => {
-                        res.redirect(`/${esporte}`)
-                    }).catch((error) => {
-                        req.flash('error', 'Ocorreu um erro desconhecido, contate o suporte')
-                        res.redirect(`/${esporte}`)
-                    })
-
+                set(ref(db, `users/${user.uid}/escalacao/${esporte}/${posicao}`), snapshot.val()).then(() => {
+                    res.redirect(`/${esporte}`)
                 }).catch((error) => {
                     req.flash('error', 'Ocorreu um erro desconhecido, contate o suporte')
                     res.redirect(`/${esporte}`)
                 })
 
-            } else {
-                console.log('Usuário não logado foi redirecionado para /login\n')
-                res.redirect('/login')
-            }
+            }).catch((error) => {
+                req.flash('error', 'Ocorreu um erro desconhecido, contate o suporte')
+                res.redirect(`/${esporte}`)
+            })
         } else {
             console.log('Mercado fechado\n')
             req.flash('error', 'O mercado já fechou! Abre o olho e acompanha os horários pra saber quando vai poder mexer na tua escalação de novo!')
@@ -577,23 +535,17 @@ app.post('/escalar', async (req, res) => {
     })
 })
 
-app.get('/limparescalacao/:esporte', async (req, res) => {
+app.get('/limparescalacao/:esporte', isAuthenticated, async (req, res) => {
     get(child(ref(db), 'mercado/aberto')).then((snapshot) => {
         mercadoAberto = snapshot.val()
         if (mercadoAberto != false) {
-            const auth = getAuth();
-            const user = auth.currentUser;
-            if (user) {
-                console.log(`Usuário logado acessou /limparescalacao/${req.params.esporte}\n`)
-                set(ref(db, `users/${user.uid}/escalacao/${req.params.esporte}`), {}).then(() => {
-                    res.json({ success: true })
-                }).catch((error) => {
-                    res.json({ success: false })
-                })
-            } else {
-                console.log('Usuário não logado foi redirecionado para /login\n')
-                res.redirect('/login')
-            }
+            var user = req.user
+            console.log(`Usuário logado acessou /limparescalacao/${req.params.esporte}\n`)
+            set(ref(db, `users/${user.uid}/escalacao/${req.params.esporte}`), {}).then(() => {
+                res.json({ success: true })
+            }).catch((error) => {
+                res.json({ success: false })
+            })
         } else {
             console.log('Mercado fechado\n')
             req.flash('error', 'O mercado já fechou! Abre o olho e acompanha os horários pra saber quando vai poder mexer na tua escalação de novo!')
@@ -602,280 +554,193 @@ app.get('/limparescalacao/:esporte', async (req, res) => {
     })
 })
 
-app.get('/pontuacao', async (req, res) => {
-    const auth = getAuth();
-    const user = auth.currentUser;
-    if (user) {
-        if (admins.indexOf(user.uid) != -1) {
-            console.log(`Admin ${user.uid} acessou /pontuacao (GET)\n`)
-            res.render('pontuacao')
-        } else {
-            console.log(`Usuário ${user.uid} tentou acessar /pontuacao (GET)\n`)
-            req.flash('error', 'Você não tem permissão para acessar essa página')
-            res.redirect('/')
-        }
+app.get('/pontuacao', isAuthenticated, async (req, res) => {
+    var user = req.user
+    if (admins.indexOf(user.uid) != -1) {
+        console.log(`Admin ${user.uid} acessou /pontuacao (GET)\n`)
+        res.render('pontuacao')
     } else {
-        console.log('Usuário não logado foi redirecionado para /login\n')
-        res.redirect('/login')
+        console.log(`Usuário ${user.uid} tentou acessar /pontuacao (GET)\n`)
+        req.flash('error', 'Você não tem permissão para acessar essa página')
+        res.redirect('/')
     }
 
 })
 
-app.post('/pontuacao', async (req, res) => {
-    const auth = getAuth();
-    const user = auth.currentUser;
-    if (user) {
-        if (admins.indexOf(user.uid) != -1) {
-            console.log(`Admin ${user.uid} acessou /pontuacao (POST)\n`)
-            get(child(ref(db), `lista/${req.body.esporte}/${req.body.posicao}/${req.body.matricula}`)).then((snapshot) => {
+app.post('/pontuacao', isAuthenticated, async (req, res) => {
+    var user = req.user
+    if (admins.indexOf(user.uid) != -1) {
+        console.log(`Admin ${user.uid} acessou /pontuacao (POST)\n`)
+        get(child(ref(db), `lista/${req.body.esporte}/${req.body.posicao}/${req.body.matricula}`)).then((snapshot) => {
+            if (snapshot.exists()) {
+                console.log('Jogador encontrado, registrando pontuação\n')
+                const jogador = snapshot.val()
+                set(ref(db, `registro/${req.body.esporte}/${req.body.posicao}/${req.body.matricula}/${Date.now()}`), {
+                    nome: jogador.nome,
+                    matricula: req.body.matricula,
+                    acao: req.body.acao,
+                    pontos: req.body.pontos,
+                    admin: user.uid
+                }).then(() => {
+                    console.log(`Registrados ${req.body.pontos} pontos para ${jogador.nome}, por ${req.body.acao}\n`)
+                    res.json({ success: true })
+                }).catch((error) => {
+                    res.json({ success: false, message: 'Ocorreu um erro desconhecido, contate o suporte' })
+                    console.log(`Error: ${error.code} - ${error.message}`)
+                })
+            } else {
+                console.log('Jogador não encontrado\n')
+                res.json({ success: false, message: 'Jogador não encontrado' })
+            }
+        }).catch((error) => {
+            console.log(`Error: ${error.code} - ${error.message}`)
+            res.json({ success: false, message: 'Ocorreu um erro desconhecido, contate o suporte' })
+        })
+    } else {
+        console.log(`Usuário ${user.uid} tentou acessar /pontuacao (POST)\n`)
+        req.flash('error', 'Você não tem permissão para fazer isso')
+        res.redirect('/')
+    }
+})
+
+app.get('/mercado', isAuthenticated, async (req, res) => {
+    var user = req.user
+    if (admins.indexOf(user.uid) != -1) {
+        console.log(`Admin ${user.uid} acessou /mercado (GET)\n`)
+        get(child(ref(db), 'mercado')).then((snapshot) => {
+            const mercado = snapshot.val()
+            res.render('mercado', { mercado: mercado })
+        })
+    } else {
+        console.log(`Usuário ${user.uid} tentou acessar /mercado (GET)\n`)
+        req.flash('error', 'Você não tem permissão para acessar essa página')
+        res.redirect('/')
+    }
+})
+
+app.post('/mercado', isAuthenticated, async (req, res) => {
+    var user = req.user
+    var aberto = true ? req.body.aberto == 'true' : false
+    if (admins.indexOf(user.uid) != -1) {
+        console.log(`Admin ${user.uid} acessou /mercado (POST)\n`)
+        set(ref(db, 'mercado'), { aberto: aberto, hora: req.body.hora }).then(() => {
+            res.redirect('/')
+        }).catch((error) => {
+            req.flash('error', 'Ocorreu um erro desconhecido, contate o suporte')
+        })
+    } else {
+        console.log(`Usuário ${user.uid} tentou acessar /mercado (POST)\n`)
+        req.flash('error', 'Você não tem permissão para fazer isso')
+        res.redirect('/')
+    }
+})
+
+app.get('/pontuar', isAuthenticated, async (req, res) => {
+    var user = req.user
+    if (admins.indexOf(user.uid) != -1) {
+        console.log(`Admin ${user.uid} acessou /pontuar (GET)\n`)
+        res.render('pontuar')
+    } else {
+        console.log(`Usuário ${user.uid} tentou acessar /pontuar (GET)\n`)
+        req.flash('error', 'Você não tem permissão para acessar essa página')
+        res.redirect('/')
+    }
+})
+
+app.post('/pontuar', isAuthenticated, async (req, res) => {
+    var user = req.user
+    if (admins.indexOf(user.uid) != -1) {
+        console.log(`Admin ${user.uid} acessou /pontuar (POST)\n`)
+        if (req.body.acao == 'geral') {
+            get(child(ref(db), `registro`)).then((snapshot) => {
                 if (snapshot.exists()) {
-                    console.log('Jogador encontrado, registrando pontuação\n')
-                    const jogador = snapshot.val()
-                    set(ref(db, `registro/${req.body.esporte}/${req.body.posicao}/${req.body.matricula}/${Date.now()}`), {
-                        nome: jogador.nome,
-                        matricula: req.body.matricula,
-                        acao: req.body.acao,
-                        pontos: req.body.pontos,
-                        admin: user.uid
-                    }).then(() => {
-                        console.log(`Registrados ${req.body.pontos} pontos para ${jogador.nome}, por ${req.body.acao}\n`)
-                        res.json({ success: true })
-                    }).catch((error) => {
-                        res.json({ success: false, message: 'Ocorreu um erro desconhecido, contate o suporte' })
-                        console.log(`Error: ${error.code} - ${error.message}`)
-                    })
-                } else {
-                    console.log('Jogador não encontrado\n')
-                    res.json({ success: false, message: 'Jogador não encontrado' })
-                }
-            }).catch((error) => {
-                console.log(`Error: ${error.code} - ${error.message}`)
-                res.json({ success: false, message: 'Ocorreu um erro desconhecido, contate o suporte' })
-            })
-        } else {
-            console.log(`Usuário ${user.uid} tentou acessar /pontuacao (POST)\n`)
-            req.flash('error', 'Você não tem permissão para fazer isso')
-            res.redirect('/')
-        }
-    } else {
-        console.log('Usuário não logado foi redirecionado para /login\n')
-        res.redirect('/login')
-    }
-})
+                    const registro = snapshot.val()
+                    Object.entries(registro).forEach(esporte => {
+                        Object.entries(esporte[1]).forEach(posicao => {
+                            Object.entries(posicao[1]).forEach(matricula => {
+                                var pts = 0
+                                Object.values(matricula[1]).forEach(pontuacao => {
+                                    pts += pontuacao.pontos
+                                })
+                                get(child(ref(db), `lista/${esporte[0]}/${posicao[0]}/${matricula[0]}/pontos`)).then((snapshot) => {
+                                    set(ref(db, `lista/${esporte[0]}/${posicao[0]}/${matricula[0]}/pontos`), pts).then(() => {
+                                        // set(ref(db, `registro/${esporte[0]}/${posicao[0]}/${matricula[0]}`), null)
+                                        pts -= snapshot.val()
+                                        get(child(ref(db), `users`)).then((snapshot_) => {
+                                            Object.entries(snapshot_.val()).forEach(user => {
+                                                if (Object.values(user[1].escalacao[esporte[0]][posicao[0]]).indexOf(parseInt(matricula[0])) != -1) {
 
-app.get('/mercado', async (req, res) => {
-    const auth = getAuth();
-    const user = auth.currentUser;
-    if (user) {
-        if (admins.indexOf(user.uid) != -1) {
-            console.log(`Admin ${user.uid} acessou /mercado (GET)\n`)
-            get(child(ref(db), 'mercado')).then((snapshot) => {
-                const mercado = snapshot.val()
-                res.render('mercado', { mercado: mercado })
-            })
-        } else {
-            console.log(`Usuário ${user.uid} tentou acessar /mercado (GET)\n`)
-            req.flash('error', 'Você não tem permissão para acessar essa página')
-            res.redirect('/')
-        }
-    } else {
-        console.log('Usuário não logado foi redirecionado para /login\n')
-        res.redirect('/login')
-    }
-})
-
-app.post('/mercado', async (req, res) => {
-    const auth = getAuth();
-    const user = auth.currentUser;
-    if (user) {
-        if (admins.indexOf(user.uid) != -1) {
-            console.log(`Admin ${user.uid} acessou /mercado (POST)\n`)
-            set(ref(db, 'mercado'), { aberto: Boolean(req.body.aberto), hora: req.body.hora }).then(() => {
-                res.redirect('/')
-            }).catch((error) => {
-                req.flash('error', 'Ocorreu um erro desconhecido, contate o suporte')
-            })
-        } else {
-            console.log(`Usuário ${user.uid} tentou acessar /mercado (POST)\n`)
-            req.flash('error', 'Você não tem permissão para fazer isso')
-            res.redirect('/')
-        }
-    } else {
-        console.log('Usuário não logado foi redirecionado para /login\n')
-        res.redirect('/login')
-    }
-})
-
-app.get('/pontuar', async (req, res) => {
-    const auth = getAuth();
-    const user = auth.currentUser;
-    if (user) {
-        if (admins.indexOf(user.uid) != -1) {
-            console.log(`Admin ${user.uid} acessou /pontuar (GET)\n`)
-            res.render('pontuar')
-        } else {
-            console.log(`Usuário ${user.uid} tentou acessar /pontuar (GET)\n`)
-            req.flash('error', 'Você não tem permissão para acessar essa página')
-            res.redirect('/')
-        }
-    }
-})
-
-app.post('/pontuar', async (req, res) => {
-    const auth = getAuth();
-    const user = auth.currentUser;
-    if (user) {
-        if (admins.indexOf(user.uid) != -1) {
-            console.log(`Admin ${user.uid} acessou /pontuar (POST)\n`)
-            if (req.body.acao == 'geral') {
-                get(child(ref(db), `registro`)).then((snapshot) => {
-                    if (snapshot.exists()) {
-                        const registro = snapshot.val()
-                        Object.entries(registro).forEach(esporte => {
-                            Object.entries(esporte[1]).forEach(posicao => {
-                                Object.entries(posicao[1]).forEach(matricula => {
-                                    var pts = 0
-                                    Object.values(matricula[1]).forEach(pontuacao => {
-                                        pts += pontuacao.pontos
-                                    })
-                                    get(child(ref(db), `lista/${esporte[0]}/${posicao[0]}/${matricula[0]}/pontos`)).then((snapshot) => {
-                                        set(ref(db, `lista/${esporte[0]}/${posicao[0]}/${matricula[0]}/pontos`), pts).then(() => {
-                                            // set(ref(db, `registro/${esporte[0]}/${posicao[0]}/${matricula[0]}`), null)
-                                            pts -= snapshot.val()
-                                            get(child(ref(db), `users`)).then((snapshot_) => {
-                                                Object.entries(snapshot_.val()).forEach(user => {
-                                                    if (Object.values(user[1].escalacao[esporte[0]][posicao[0]]).indexOf(parseInt(matricula[0])) != -1) {
-
-                                                        if (user[1].pontos == undefined || user[1].pontos == NaN) {
-                                                            user[1].pontos = 0
-                                                        }
-                                                        if (user[1].escalacao[esporte[0]].capitao.matricula == matricula[0]) {
-                                                            pts *= 1.5
-                                                        }
-                                                        user[1].pontos += pts
-                                                        set(ref(db, `users/${user[0]}/pontos`), user[1].pontos).then(() => {
-                                                            console.log(`${user[0]} pontuou ${pts} pontos`)
-                                                        }).catch((error) => {
-                                                            console.log(`Error: ${error.code} - ${error.message}`)
-                                                        })
-
+                                                    if (user[1].pontos == undefined || user[1].pontos == NaN) {
+                                                        user[1].pontos = 0
                                                     }
-                                                })
-                                            })
-                                        }).catch((error) => {
-                                            console.log(`Error: ${error.code} - ${error.message}`)
-                                        })
+                                                    if (user[1].escalacao[esporte[0]].capitao.matricula == matricula[0]) {
+                                                        pts *= 1.5
+                                                    }
+                                                    user[1].pontos += pts
+                                                    set(ref(db, `users/${user[0]}/pontos`), user[1].pontos).then(() => {
+                                                        console.log(`${user[0]} pontuou ${pts} pontos`)
+                                                    }).catch((error) => {
+                                                        console.log(`Error: ${error.code} - ${error.message}`)
+                                                    })
 
+                                                }
+                                            })
+                                        })
                                     }).catch((error) => {
                                         console.log(`Error: ${error.code} - ${error.message}`)
                                     })
+
+                                }).catch((error) => {
+                                    console.log(`Error: ${error.code} - ${error.message}`)
                                 })
                             })
                         })
-                    } else {
-                        console.log('Não há registro de nenhuma atividade para pontuar\n')
-                        req.flash('error', 'Não há registro de nenhuma atividade para pontuar')
-                    }
-                    res.redirect('/')
-                })
-            } else if (req.body.acao == 'quimica') {
-                get(child(ref(db), `users`)).then((snapshot) => {
-                    Object.entries(snapshot.val()).forEach(user => {
-                        //contar quantos jogadores tem de cada time na escalação do usuário
-                        Object.entries(user[1].escalacao).forEach(esporte => {
-                            var pts = 0
-                            var times = []
-                            Object.values(esporte[1]).forEach(posicao => {
-                                times = times.concat(posicao.equipe)
-                            })
-                            pts += times.filter((value, index, self) => {
-                                return self.indexOf(value) === index
-                            }).length
-                            pts == 1 ? pts = 0 : pts *= 5
-                            pts > 15 ? pts = 15 : pts = pts
-                            console.log(`${user[0]} pontuou ${pts} pontos por química no ${esporte[0]}`)
+                    })
+                } else {
+                    console.log('Não há registro de nenhuma atividade para pontuar\n')
+                    req.flash('error', 'Não há registro de nenhuma atividade para pontuar')
+                }
+                res.redirect('/')
+            })
+        } else if (req.body.acao == 'quimica') {
+            get(child(ref(db), `users`)).then((snapshot) => {
+                Object.entries(snapshot.val()).forEach(user => {
+                    //contar quantos jogadores tem de cada time na escalação do usuário
+                    Object.entries(user[1].escalacao).forEach(esporte => {
+                        var pts = 0
+                        var times = []
+                        Object.values(esporte[1]).forEach(posicao => {
+                            times = times.concat(posicao.equipe)
                         })
+                        pts += times.filter((value, index, self) => {
+                            return self.indexOf(value) === index
+                        }).length
+                        pts == 1 ? pts = 0 : pts *= 5
+                        pts > 15 ? pts = 15 : pts = pts
+                        console.log(`${user[0]} pontuou ${pts} pontos por química no ${esporte[0]}`)
                     })
                 })
-            }
-        } else {
-            console.log(`Usuário ${user.uid} tentou acessar /pontuar (POST)\n`)
-            req.flash('error', 'Você não tem permissão para fazer isso')
-            res.redirect('/')
+            })
         }
     } else {
-        console.log('Usuário não logado foi redirecionado para /login\n')
-        res.redirect('/login')
+        console.log(`Usuário ${user.uid} tentou acessar /pontuar (POST)\n`)
+        req.flash('error', 'Você não tem permissão para fazer isso')
+        res.redirect('/')
     }
 })
 
-app.post('/authorize', async (req, res) => {
-    if (req.body.password == 'Gesf2120') {
-        console.log('Usuário logado acessou /authorize\n')
-        get(child(ref(db), `lista/provisorios/${req.body.matricula}`)).then((snapshot) => {
-            if (snapshot.exists()) {
-                var jogador = snapshot.val()
-                set(ref(db, `lista/${jogador.posicao}/${req.body.matricula}`), jogador).then(() => {
-                    set(ref(db, `lista/provisorios/${req.body.matricula}`), null).then(() => {
-                        res.send('Autorizado')
-                    }).catch((error) => {
-                        res.send('Ocorreu um erro desconhecido: ' + error)
-                    })
-                }).catch((error) => {
-                    res.send('Ocorreu um erro desconhecido: ' + error)
-                })
-            } else {
-                res.send('Jogador não encontrado')
-            }
-        }).catch((error) => {
-            res.send('Ocorreu um erro desconhecido: ' + error)
-        })
+app.get('/autorizar', isAuthenticated, async (req, res) => {
+    var user = req.user
+    if (admins.indexOf(user.uid) != -1) {
+        console.log(`Admin ${user.uid} acessou /autorizar (GET)\n`)
+        const jogadores = await get(child(ref(db), `jogadores/provisorio`))
+        res.render('autorizar', { jogadores: jogadores.val() })
     } else {
-        console.log('Usuário não logado tentou acessar /authorize\n')
-        res.send('Não autorizado')
+        console.log(`Usuário ${user.uid} tentou acessar /pontuar (POST)\n`)
+        req.flash('error', 'Você não tem permissão para fazer isso')
+        res.redirect('/')
     }
 })
-
-app.post('/atualizar', async (req, res) => {
-    if (req.body.password == 'Gesf2120') {
-        console.log('Usuário logado acessou /contarpontos\n')
-        get(child(ref(db), `lista`)).then((snapshot) => {
-            var lista = snapshot.val()
-            get(child(ref(db), `users`)).then((snapshot) => {
-                var users = snapshot.val()
-                for (const user in users) {
-
-                    var pontos = parseInt(users[user].pontos)
-                    var escalacao = users[user].esquema
-
-                    if (lista.geral[escalacao.fixo.username]) {
-                        pontos += parseInt(lista.geral[escalacao.fixo.username].pontos)
-                    }
-                    if (lista.geral[escalacao.alaesquerda.username]) {
-                        pontos += parseInt(lista.geral[escalacao.alaesquerda.username].pontos)
-                    }
-                    if (lista.geral[escalacao.aladireita.username]) {
-                        pontos += parseInt(lista.geral[escalacao.aladireita.username].pontos)
-                    }
-                    if (lista.geral[escalacao.pivo.username]) {
-                        pontos += parseInt(lista.geral[escalacao.pivo.username].pontos)
-                    }
-                    if (lista.goleiros[escalacao.goleiro.username]) {
-                        pontos += parseInt(lista.goleiros[escalacao.goleiro.username].pontos)
-                    }
-                    //pontos = parseInt(lista.geral[escalacao.aladireita.username].pontos + parseInt(lista.geral[escalacao.alaesquerda.username].pontos) + parseInt(lista.goleiros[escalacao.goleiro.username].pontos) + parseInt(lista.geral[escalacao.fixo.username].pontos) + parseInt(lista.geral[escalacao.pivo.username].pontos))
-                    console.log(pontos)
-                    set(ref(db, `users/${user}/pontos`), pontos).then(() => {
-                        console.log(`Pontos de ${user} atualizados para ${pontos}\n`)
-                    })
-                }
-            })
-        })
-    }
-})
-
-
-
 
 
 //configuração da porta do servidor

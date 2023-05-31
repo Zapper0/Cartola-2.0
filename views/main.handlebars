@@ -19,6 +19,13 @@
         alert("{{success}}")
     </script>
     {{/if}}
+    {{#if message}}
+    <script>
+        alert(`Bem vindo(a) ao Cartola Champagnat!\n\n
+Escale seus times e vá pontuando conforme os jogos!\n\n
+Fique atento ao mercado, caso queira trocar algum jogador, o mercado precisa estar aberto.\n\nBoa sorte!`)
+    </script>
+    {{/if}}
     <div class="navbar">
         <img class="logo" src="/images/cartola_logo.png" alt="">
         <a href="/futsal">Futsal</a>
@@ -33,10 +40,10 @@
             <p>Você não tem times escalados ainda</p>
         </div>
         <div class="card" id="pontos">
-            <p>Você tem 00 pontos</p>
-            <p class="sport-points" id="futsal">00 do Futsal</p>
-            <p class="sport-points" id="basquete">00 do Basquete</p>
-            <p class="sport-points" id="handebol">00 do Handebol</p>
+            <p id="pontos-totais">Você tem 0 pontos</p>
+            <p class="sport-points" id="futsal">0 do Futsal</p>
+            <p class="sport-points" id="basquete">0 do Basquete</p>
+            <p class="sport-points" id="handebol">0 do Handebol</p>
         </div>
         {{#if admin}}
         <div class="card">
@@ -44,6 +51,7 @@
             <a href="/mercado">Configurar mercado</a>
             <a href="/pontuacao">Registrar pontuações</a>
             <a href="/pontuar">Atualizar pontuações</a>
+            <a href="/autorizar">Autorizar jogadores</a>
         </div>
         {{/if}}
     </div>
@@ -73,6 +81,30 @@
         });
         divTimes.innerHTML = `<p>Você tem times escalados para ${timesEscalados}</p>`
     }
+    if(user.pontos == undefined)
+        user.pontos = 0
+    var pontos_totais = user.pontos
+    var pPontos = document.getElementById('pontos-totais')
+    pPontos.innerHTML = `Você tem ${pontos_totais} pontos`
+    
+    if(user.escalacao){
+        if(user.escalacao.futsal){
+            var pontos_futsal = user.escalacao.futsal.pontos == undefined ? 0 : user.escalacao.futsal.pontos
+            var pFutsal = document.getElementById('futsal')
+            pFutsal.innerHTML = `${pontos_futsal} do Futsal`
+        }
+        if(user.escalacao.basquete){
+            var pontos_basquete = user.escalacao.basquete.pontos == undefined ? 0 : user.escalacao.basquete.pontos
+            var pBasquete = document.getElementById('basquete')
+            pBasquete.innerHTML = `${pontos_basquete} do Basquete`
+        }
+        if(user.escalacao.handebol){
+            var pontos_handebol = user.escalacao.handebol.pontos == undefined ? 0 : user.escalacao.handebol.pontos
+            var pHandebol = document.getElementById('handebol')
+            pHandebol.innerHTML = `${pontos_handebol} do Handebol`
+        }
+    }
+    
 </script>
 
 
