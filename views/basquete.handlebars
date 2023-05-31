@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="/js/limparEscalacao.js"></script>
     <link rel="stylesheet" href="/css/delete.css">
     <link rel="stylesheet" href="/css/jogadores.css">
     <link rel="stylesheet" href="/css/navbar.css">
@@ -26,25 +27,46 @@
         <a href="/basquete">Basquete</a>
     </div>
     <div id="side">
-        <img id="delete" src="https://img.icons8.com/ios-filled/500/aaaaaa/delete--v1.png"  onclick="limparEscalacao('futsal')" />
+        <img id="delete" src="https://img.icons8.com/ios-filled/500/aaaaaa/delete--v1.png"  onclick="limparEscalacao('basquete')" />
+        <a href="/capitao/basquete" id="capitao">C</a>
     </div>
     <div id="quadra">
         {{#with jogadores}}
         <span id="jogadores">
             <a href="jogadores/basquete/pivo" class="link-jogador">
+            {{#if pivo}}
                 <div class="jogador" id="pivo"><img src="{{pivo.foto}}" class="img-jogador"></div>
+            {{else}}
+                <div class="jogador" id="pivo"><img class="img-jogador" src="https://cdn.discordapp.com/attachments/1089033461668515850/1095162087950524637/2854274f-14d6-46a8-9bd9-382a72db6ee3.png"></div>
+            {{/if}}
             </a>
             <a href="jogadores/basquete/ala">
+                {{#if ala}}
                 <div class="jogador" id="ala"><img src="{{ala.foto}}" class="img-jogador"></div>
+                {{else}}
+                <div class="jogador" id="ala"><img class="img-jogador" src="https://cdn.discordapp.com/attachments/1089033461668515850/1095162087950524637/2854274f-14d6-46a8-9bd9-382a72db6ee3.png"></div>
+                {{/if}}
             </a>
             <a href="jogadores/basquete/alapivo" class="link-jogador">
+                {{#if alapivo}}
                 <div class="jogador" id="ala-pivo"><img src="{{alapivo.foto}}" class="img-jogador"></div>
+                {{else}}
+                <div class="jogador" id="ala-pivo"><img class="img-jogador" src="https://cdn.discordapp.com/attachments/1089033461668515850/1095162087950524637/2854274f-14d6-46a8-9bd9-382a72db6ee3.png"></div>
+                {{/if}}
             </a>
             <a href="jogadores/basquete/alaarmador" class="link-jogador">
+                {{#if alaarmador}}
                 <div class="jogador" id="ala-armador"><img src="{{alaarmador.foto}}" class="img-jogador"></div>
+                {{else}}
+                <div class="jogador" id="ala-armador"><img class="img-jogador" src="https://cdn.discordapp.com/attachments/1089033461668515850/1095162087950524637/2854274f-14d6-46a8-9bd9-382a72db6ee3.png"></div>
+                {{/if}}
             </a>
             <a href="jogadores/basquete/armador" class="link-jogador">
+                {{#if armador}}
                 <div class="jogador" id="armador"><img src="{{armador.foto}}" class="img-jogador"></div>
+                {{else}}
+                <div class="jogador" id="armador"><img class="img-jogador" src="https://cdn.discordapp.com/attachments/1089033461668515850/1095162087950524637/2854274f-14d6-46a8-9bd9-382a72db6ee3.png"></div>
+                {{/if}}
             </a>
         </span>
         {{/with}}
@@ -61,6 +83,14 @@
         </span>
     </div>
 </body>
+
+{{#if jogadores.capitao}}
+<script>
+    var capitao = {{{json jogadores.capitao}}};
+    document.getElementById(capitao.posicao).style.border = "5px solid #41b1c4";
+</script>
+{{/if}}
+
 <style>
     body {
         display: flex;

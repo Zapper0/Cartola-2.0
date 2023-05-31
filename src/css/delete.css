@@ -2,13 +2,14 @@
     z-index: 1;
     position: fixed;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: space-around;
+    justify-content: center;
     border-left-style: hidden;
     background-color: #41b1c4;
     width: 60px;
-    height: 50px;
-    border-radius: 70px 0 0 70px;
+    height: 90px;
+    border-radius: 20px 0 0 20px;
     right: 0;
     top: 80px;
 }
@@ -20,4 +21,25 @@
 
 #delete:hover {
     cursor: pointer;
+}
+
+#capitao {
+    padding: 3px;
+    text-align: center;
+    text-decoration: none;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    color: #fff;
+    font-size: 30px;
+    height: 30px;
+    width: 30px;
+    margin: 0;
+    margin-top: 5px;
+    border-radius: 100%;
+    background-color: #0099CC;
+}
+
+#capitao:hover {
+    cursor: pointer;
+    background-color: #0077FF;
 }

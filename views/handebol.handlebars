@@ -21,13 +21,15 @@
     <div class="navbar">
         <a href="/">
             <img class="logo" src="/images/cartola_logo.png" alt="">
+            
         </a>
         <a href="/futsal">Futsal</a>
         <a href="/handebol">Handebol</a>
         <a href="/basquete">Basquete</a>
     </div>
     <div id="side">
-        <img id="delete" src="https://img.icons8.com/ios-filled/500/aaaaaa/delete--v1.png"  onclick="limparEscalacao('futsal')" />
+        <img id="delete" src="https://img.icons8.com/ios-filled/500/aaaaaa/delete--v1.png"  onclick="limparEscalacao('handebol')" />
+        <a href="/capitao/handebol" id="capitao">C</a>
     </div>
     <div id="quadra">
         {{#with jogadores}}
@@ -112,6 +114,14 @@
         </span>
     </div>
 </body>
+
+{{#if jogadores.capitao}}
+<script>
+    var capitao = {{{json jogadores.capitao}}};
+    document.getElementById(capitao.posicao).style.border = "5px solid #41b1c4";
+</script>
+{{/if}}
+
 <style>
     body {
         display: flex;

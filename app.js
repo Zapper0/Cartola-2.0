@@ -1,6 +1,3 @@
-//criar um site baseado no express e node
-
-//imports
 import express from 'express'
 const app = express()
 import handlebars from 'express-handlebars'
@@ -9,8 +6,10 @@ import session from 'express-session'
 import { initializeApp } from 'firebase/app'
 import { getDatabase, ref, set, child, get } from 'firebase/database'
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, browserSessionPersistence, inMemoryPersistence, setPersistence, reauthenticateWithCredential } from 'firebase/auth'
+import { getStorage, uploadBytes, getDownloadURL, ref as refStorage } from 'firebase/storage'
 import bb from 'express-busboy'
 import path from 'path'
+import fs from 'fs'
 
 const __dirname = path.resolve()
 const uploadPath = path.join(__dirname, 'uploads')
@@ -28,6 +27,7 @@ const firebaseConfig = {
 
 const firebaseApp = initializeApp(firebaseConfig)
 const db = getDatabase(firebaseApp)
+const storage = getStorage(firebaseApp)
 
 var mercadoAberto = false
 
@@ -189,7 +189,11 @@ app.use(flash())
 bb.extend(app, {
     upload: true,
     path: 'src/uploads',
+    strip: (value, type) => {
+        return value
+    }
 })
+
 
 
 app.use(express.static('src'))
@@ -213,8 +217,8 @@ app.get('/', async (req, res) => {
     var admin = false
     if (user) {
         admins.indexOf(user.uid) > -1 ? admin = true : admin = false
-        
-        console.log(`${admin ? `Admin ${user.uid}` :'Usuário logado' } acessou /\n`)
+
+        console.log(`${admin ? `Admin ${user.uid}` : 'Usuário logado'} acessou /\n`)
         get(child(ref(db), `users/${user.uid}`)).then((snapshot) => {
             get(child(ref(db), `mercado`)).then((snapshot_) => {
                 if (snapshot.exists()) {
@@ -344,6 +348,63 @@ app.get('/jogadores/:esporte/:posicao', async (req, res) => {
     }
 })
 
+app.get('/capitao/:esporte', async (req, res) => {
+    const auth = getAuth()
+    var user = auth.currentUser
+    if (user) {
+        console.log(`Usuário logado acessou /capitao/${req.params.esporte} (GET)\n`)
+        get(child(ref(db), `users/${user.uid}/escalacao/${req.params.esporte}`)).then((snapshot) => {
+            if (snapshot.exists()) {
+                var jogadores = snapshot.val()
+                if (jogadores.capitao) {
+                    delete jogadores.capitao
+                }
+                res.render('capitao', { jogadores: Object.entries(jogadores), esporte: req.params.esporte })
+            } else {
+                req.flash('error', 'Ainda não há nenhum capitão registrado.')
+                res.redirect(`/${req.params.esporte}`);
+            }
+        }).catch((error) => {
+            req.flash('error', 'Ocorreu algum erro inesperado, por favor contate o suporte.')
+            res.redirect('/');
+        });
+    } else {
+        console.log('Usuário não logado foi redirecionado para /login\n')
+        res.redirect('/login')
+    }
+})
+
+app.post('/capitao', async (req, res) => {
+    const auth = getAuth()
+    var user = auth.currentUser
+    if (user) {
+        console.log(`Usuário logado acessou /capitao (POST)\n`)
+        get(child(ref(db), `lista/${req.body.esporte}/${req.body.posicao}/${req.body.matricula}`)).then((snapshot) => {
+            if (snapshot.exists()) {
+                var capitao = snapshot.val()
+                capitao.posicao = req.body.posicao
+                set(ref(db, `users/${user.uid}/escalacao/${req.body.esporte}/capitao`), capitao).then(() => {
+                    console.log('Capitão registrado com sucesso')
+                    req.flash('error', 'Capitão registrado com sucesso')
+                    res.redirect(`/${req.body.esporte}`);
+                }).catch((error) => {
+                    req.flash('error', 'Ocorreu algum erro inesperado, por favor contate o suporte.')
+                    res.redirect(`/${req.body.esporte}`);
+                });
+            } else {
+                req.flash('error', 'Jogador não encontrado.')
+                res.redirect(`/${req.body.esporte}`);
+            }
+        }).catch((error) => {
+            req.flash('error', 'Ocorreu algum erro inesperado, por favor contate o suporte.')
+            res.redirect('/');
+        });
+    } else {
+        console.log('Usuário não logado foi redirecionado para /login\n')
+        res.redirect('/login')
+    }
+})
+
 app.get('/login', async (req, res) => {
     res.render('login', { error: req.flash('error') })
 })
@@ -428,75 +489,42 @@ app.get('/registerplayer', async (req, res) => {
 
 app.post('/registerplayer', async (req, res) => {
 
-    var nome = req.body.nome
-    var equipe = req.body.equipe
-    var numero = req.body.numero
-    var pos = req.body.posicao
     var matricula = req.body.username
-    var imagem = req.files
+    var nome = req.body.nome
+    var numero = req.body.numero
+    var equipe = req.body.equipe
+    var esporte = req.body.esporte
+    var pos = req.body.posicao
+    var imagem = req.files.foto
 
-    console.log(req.files.foto)
-    /*
-    uploadBytes(image, req.files.foto.data).then((uploadResult) => {
-        console.log('Foto enviada')
-        getDownloadURL(image).then((url) => {
-            get(child(ref(db), `lista/${pos}/${matricula}`)).then((snapshot) => {
-                if (snapshot.exists()) {
-                    req.flash('error', 'Já existe um jogador com essa matrícula, em caso de erro, contate o suporte.')
-                    res.redirect('/registerplayer')
-                } else {
-                    get(child(ref(db), `lista/provisorios/${pos}/${matricula}`)).then((snapshot) => {
-                        if (snapshot.exists()) {
-                            req.flash('error', 'Já existe um jogador com essa matrícula, em caso de erro, contate o suporte.')
-                            res.redirect('/registerplayer')
-                        } else {
-                            set(child(ref(db), `lista/provisorios/${matricula}`), {
-                                nome: nome,
-                                equipe: equipe,
-                                numero: numero,
-                                foto: url,
-                                pontos: '0',
-                                username: matricula,
-                                posicao: pos
-                            }).then(() => {
-                                console.log('Jogador cadastrado com sucesso!')
-                                req.flash('success_msg', 'Jogador cadastrado com sucesso!')
-                                res.redirect('/login')
-                            }).catch((error) => {
-                                const errorCode = error.code;
-                                const errorMessage = error.message;
-                                console.log(`Error: ${errorCode} - ${errorMessage}`)
-                                req.flash('error', `Erro desconhecido, contate o suporte:\n\nCódigo de erro: ${errorCode}\nMensagem: ${errorMessage}`)
-                                res.redirect('/registerplayer')
-                            })
-                        }
-                    })
-                }
+    uploadBytes(refStorage(storage, `${matricula}`), fs.readFileSync(imagem.file)).then((uploadResult) => {
+        getDownloadURL(uploadResult.ref).then((url) => {
+            set(ref(db, `jogadores/provisorio/${esporte}/${matricula}`), {
+                nome: nome,
+                numero: numero,
+                equipe: equipe,
+                posicao: pos,
+                foto: url
+            }).then(() => {
+                req.flash('error', 'Jogador registrado com sucesso')
+                res.redirect(`/login`);
+            }).catch((error) => {
+                req.flash('error', 'Ocorreu algum erro inesperado, por favor contate o suporte.')
+                res.redirect(`/registerplayer`);
             })
+        }).catch((error) => {
+            req.flash('error', 'Ocorreu algum erro inesperado, por favor contate o suporte.')
+            res.redirect(`/registerplayer`);
         })
+    }).catch((error) => {
+        req.flash('error', 'Ocorreu algum erro inesperado, por favor contate o suporte.')
+        res.redirect(`/registerplayer`);
     })
-    */
-})
-
-app.get('/perfil', async (req, res) => {
-    if (user[req.sessionID]) {
-        console.log('Usuário logado acessou /perfil\n')
-        get(child(ref(db), `users/${user[req.sessionID].uid}`)).then((snapshot) => {
-            if (snapshot.exists()) {
-                res.render('perfil', { perfil: snapshot.val() })
-            } else {
-                req.flash('error', 'Usuário não encontrado')
-                res.redirect('/')
-            }
-        })
-    } else {
-        console.log('Usuário não logado foi redirecionado para /login\n')
-        res.redirect('/login')
-    }
 })
 
 
-app.post('/escalar', async (req, res) => {
+
+app.post('/escalar', async (req, res) => {  
     get(child(ref(db), 'mercado/aberto')).then((snapshot) => {
         mercadoAberto = snapshot.val()
 
@@ -699,30 +727,33 @@ app.post('/pontuar', async (req, res) => {
                                         pts += pontuacao.pontos
                                     })
                                     get(child(ref(db), `lista/${esporte[0]}/${posicao[0]}/${matricula[0]}/pontos`)).then((snapshot) => {
-                                        set(ref(db, `lista/${esporte[0]}/${posicao[0]}/${matricula[0]}/pontos`), pts + snapshot.val()).then(() => {
-                                            set(ref(db, `registro/${esporte[0]}/${posicao[0]}/${matricula[0]}`), null)
+                                        set(ref(db, `lista/${esporte[0]}/${posicao[0]}/${matricula[0]}/pontos`), pts).then(() => {
+                                            // set(ref(db, `registro/${esporte[0]}/${posicao[0]}/${matricula[0]}`), null)
+                                            pts -= snapshot.val()
+                                            get(child(ref(db), `users`)).then((snapshot_) => {
+                                                Object.entries(snapshot_.val()).forEach(user => {
+                                                    if (Object.values(user[1].escalacao[esporte[0]][posicao[0]]).indexOf(parseInt(matricula[0])) != -1) {
+
+                                                        if (user[1].pontos == undefined || user[1].pontos == NaN) {
+                                                            user[1].pontos = 0
+                                                        }
+                                                        if (user[1].escalacao[esporte[0]].capitao.matricula == matricula[0]) {
+                                                            pts *= 1.5
+                                                        }
+                                                        user[1].pontos += pts
+                                                        set(ref(db, `users/${user[0]}/pontos`), user[1].pontos).then(() => {
+                                                            console.log(`${user[0]} pontuou ${pts} pontos`)
+                                                        }).catch((error) => {
+                                                            console.log(`Error: ${error.code} - ${error.message}`)
+                                                        })
+
+                                                    }
+                                                })
+                                            })
                                         }).catch((error) => {
                                             console.log(`Error: ${error.code} - ${error.message}`)
                                         })
 
-                                        get(child(ref(db), `users`)).then((snapshot) => {
-                                            Object.entries(snapshot.val()).forEach(user => {
-                                                console.log(user[0])
-                                                if (Object.values(user[1].escalacao[esporte[0]][posicao[0]]).indexOf(parseInt(matricula[0])) != -1) {
-
-                                                    if (user[1].pontos == undefined || user[1].pontos == NaN) {
-                                                        user[1].pontos = 0
-                                                    }
-                                                    user[1].pontos += pts
-                                                    set(ref(db, `users/${user[0]}/pontos`), user[1].pontos).then(() => {
-                                                        console.log(`${user[0]} pontuou ${pts} pontos`)
-                                                    }).catch((error) => {
-                                                        console.log(`Error: ${error.code} - ${error.message}`)
-                                                    })
-
-                                                }
-                                            })
-                                        })
                                     }).catch((error) => {
                                         console.log(`Error: ${error.code} - ${error.message}`)
                                     })
@@ -754,8 +785,6 @@ app.post('/pontuar', async (req, res) => {
                         })
                     })
                 })
-            } else if (req.body.acao == 'capitao'){
-
             }
         } else {
             console.log(`Usuário ${user.uid} tentou acessar /pontuar (POST)\n`)

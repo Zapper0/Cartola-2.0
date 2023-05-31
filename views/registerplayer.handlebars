@@ -17,12 +17,12 @@
   </div>
   {{/if}}
 
-  <form action="/registerplayer" method="post" enctype="multipart/form-data">
+  <form action="/registerplayer" method="POST" enctype="multipart/form-data">
     <img src="https://cdn.discordapp.com/attachments/1089033461668515850/1095804135766511686/cartola_logo.png" alt="">
     <input type="text" name="username" placeholder="Nº de matrícula" required>
     <input type="text" name="nome" placeholder="Nome (estampado na camiseta)">
     <input type="number" max="99" name="numero" placeholder="Nº da camiseta">
-    <select name="time" required>
+    <select name="equipe" required>
       <option value="Verde/Norte">Verde/Norte</option>
       <option value="Azul/Nordeste">Azul/Nordeste</option>
       <option value="Vermelho/Sudeste">Vermelho/Sudeste</option>

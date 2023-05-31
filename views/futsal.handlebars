@@ -29,11 +29,11 @@
     </div>
     <div id="side">
         <img id="delete" src="https://img.icons8.com/ios-filled/500/aaaaaa/delete--v1.png"  onclick="limparEscalacao('futsal')" />
+        <a href="/capitao/futsal" id="capitao">C</a>
     </div>
     <div id="quadra">
         {{#with jogadores}}
         <span id="jogadores">
-            {{!-- jogadores: fixo, ala direita e ala esquerda, goleiro e pivô --}}
             <a href="jogadores/futsal/pivo" class="link-jogador">
                 {{#if pivo}}
                 <div class="jogador" id="pivo"><img class="img-jogador" src="{{pivo.foto}}"></div>
@@ -91,7 +91,12 @@
     </div>
 </body>
 
-
+{{#if jogadores.capitao}}
+<script>
+    var capitao = {{{json jogadores.capitao}}};
+    document.getElementById(capitao.posicao).style.border = "5px solid #41b1c4";
+</script>
+{{/if}}
 
 <style>
     body {
@@ -101,10 +106,6 @@
         align-items: center;
         background-color: #525353;
     }
-
-
-
-
 </style>
 
 </html>

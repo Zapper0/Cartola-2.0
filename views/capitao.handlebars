@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/list.css">
+    <link rel="stylesheet" href="css/footer.css">
+    <title>Selecione seu capitão</title>
+</head>
+
+<body>
+    <div class="lista">
+        {{#each jogadores}}
+        <div class="card">
+            <div class="jogador">
+                <div class="jogador-info">
+                    <img class="jogador-img"
+                        src={{[1].foto}}>
+                </div>
+                <div class="jogador-info">
+                    <p class="jogador-nome jogador-texto">{{[1].nome}}</p>
+                    <p class="jogador-nome jogador-texto">Posição: {{[0]}}</p>
+                </div>
+                <div class="jogador-info jogador-texto">
+                    <p class="jogador-num jogador-texto">Nº {{[1].numero}}</p>
+                    <p class="jogador-equipe jogador-texto">Equipe {{[1].equipe}}</p>
+                </div>
+            </div>
+            <form action="/capitao" method="post">
+                <input type="hidden" name="esporte" value="{{../esporte}}">
+                <input type="hidden" name="posicao" value="{{../posicao}}">
+                <input type="hidden" name="matricula" value="{{[1].matricula}}">
+                <input type="hidden" name="posicao" value="{{[0]}}">
+                <button type="submit" class="botao-escalar">Escalar</button>
+            </form>
+        </div>
+        {{/each}}
+    </div>
+    <footer></footer>
+</body>
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        background-color: #535353;
+    }
+
+    .botao-escalar {
+        width: 5em;
+        background-color: #1212ad;
+        border: 1px solid #55ad;
+        border-radius: 5px;
+        color: #fff;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 14px;
+        font-weight: bold;
+        padding: 5px 10px;
+        margin-left: 10px;
+    }
+
+    .jogador-texto {
+        color: #fff;
+        font-family: Arial, Helvetica, sans-serif;
+        margin: 0;
+    }
+
+    .jogador-nome {
+        font-size: 1.3em;
+        margin: 0 0.5em 0.5em 0;
+    }
+
+    .jogador-pts {
+        font-size: 1em;
+        margin: 0 0.5em 0 0;
+    }
+
+    .jogador-equipe {
+        font-size: 1em;
+        margin: 0 0 0.5em 0;
+    }
+
+    .jogador-info {
+        padding: 5px;
+        width: 40%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .jogador-img {
+        width: 70px;
+        height: 70px;
+        border-radius: 100%;
+        background-image: url("https://cdn.discordapp.com/attachments/1089033461668515850/1095162087950524637/2854274f-14d6-46a8-9bd9-382a72db6ee3.png");
+        background-size: 60px;
+        background-position: center;
+        border: 1px solid #fff;
+    }
+
+    .jogador {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        margin: 0;
+    }
+
+    .lista {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background-color: #535353;
+        width: 100vw;
+        margin: 0;
+    }
+
+    .card {
+        margin: 10px 0;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        justify-content: flex-start margin: 15px 0;
+        padding: 7px;
+        min-height: 80px;
+        width: 85vw;
+        background-color: #606060;
+        border: 2px solid #707070;
+        border-radius: 5px;
+    }
+</style>
+
+</html>
