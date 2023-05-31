@@ -522,8 +522,6 @@ app.post('/registerplayer', async (req, res) => {
     })
 })
 
-
-
 app.post('/escalar', async (req, res) => {  
     get(child(ref(db), 'mercado/aberto')).then((snapshot) => {
         mercadoAberto = snapshot.val()
