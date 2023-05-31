@@ -1,18 +1,18 @@
-import express from 'express'
+const express = require('express')
 const app = express()
-import handlebars from 'express-handlebars'
-import flash from 'connect-flash'
-import session from 'express-session'
-import { initializeApp } from 'firebase/app'
-import { getDatabase, ref, set, child, get } from 'firebase/database'
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, browserSessionPersistence, inMemoryPersistence, setPersistence, reauthenticateWithCredential } from 'firebase/auth'
-import { getStorage, uploadBytes, getDownloadURL, ref as refStorage } from 'firebase/storage'
-import bb from 'express-busboy'
-import path from 'path'
-import fs from 'fs'
+const handlebars = require('express-handlebars')
+const flash = require('connect-flash')
+const session = require('express-session')
+const { initializeApp } = require('firebase/app')
+const { getDatabase, ref, set, child, get } = require('firebase/database')
+const { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, browserSessionPersistence, inMemoryPersistence, setPersistence, reauthenticateWithCredential } = require('firebase/auth')
+const { getStorage, uploadBytes, getDownloadURL } = require('firebase/storage')
+const firebaseStorage = require('firebase/storage')
+const refStorage = firebaseStorage.ref()
+const bb = require('express-busboy')
+const path = require('path')
+const fs = require('fs')
 
-const __dirname = path.resolve()
-const uploadPath = path.join(__dirname, 'uploads')
 
 const firebaseConfig = {
     apiKey: "AIzaSyD66ZB-5cEtmHMlwEmpsa9xLAJHegxyJZI",
