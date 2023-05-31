@@ -208,12 +208,25 @@ app.engine('handlebars', handlebars.engine({
 }))
 app.set('view engine', 'handlebars')
 
+const isAuthenticated = (req, res, next) => {
+    const auth = getAuth()
+    const user = auth.currentUser
+
+    if (user) {
+        // O usuário está autenticado
+        req.user = user // Armazena o usuário no objeto de solicitação para acesso posterior
+        next() // Chama o próximo middleware ou rota
+    } else {
+        // O usuário não está autenticado
+        res.redirect('/login') // Redireciona para a página de login
+    }
+}
+
 //rotas 
 
 
-app.get('/', async (req, res) => {
-    const auth = getAuth()
-    const user = auth.currentUser
+app.get('/', isAuthenticated, async (req, res) => {
+    const user = req.user
     var admin = false
     if (user) {
         admins.indexOf(user.uid) > -1 ? admin = true : admin = false
@@ -226,7 +239,8 @@ app.get('/', async (req, res) => {
                         admin: admin,
                         error: req.flash('error'),
                         success: req.flash('success'),
-                        user: snapshot.val(), mercado: snapshot_.val()
+                        user: snapshot.val(), 
+                        mercado: snapshot_.val()
                     })
                 } else {
                     res.render('main', {
@@ -522,7 +536,7 @@ app.post('/registerplayer', async (req, res) => {
     })
 })
 
-app.post('/escalar', async (req, res) => {  
+app.post('/escalar', async (req, res) => {
     get(child(ref(db), 'mercado/aberto')).then((snapshot) => {
         mercadoAberto = snapshot.val()
 
