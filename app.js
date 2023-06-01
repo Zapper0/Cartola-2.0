@@ -402,8 +402,19 @@ app.get('/basquete', isAuthenticated, async (req, res) => {
 
 app.get('/jogadores/:esporte/:posicao', isAuthenticated, async (req, res) => {
     var user = req.user
-    console.log(`Usuário logado acessou /jogadores/${req.params.esporte}/${req.params.posicao}\n`)
-    get(child(ref(db), `lista/${req.params.esporte}/${req.params.posicao}`)).then((snapshot) => {
+    var posicao = req.params.posicao
+    if (posicao == 'aladireita' || posicao == 'alaesquerda') {
+        posicao = 'ala'
+    }
+    if (posicao == 'meiadireita' || posicao == 'meiaesquerda') {
+        posicao = 'meia'
+    }
+    if (posicao == 'pontadireita' || posicao == 'pontaesquerda') {
+        posicao = 'ponta'
+    }
+
+    console.log(`Usuário logado acessou /jogadores/${req.params.esporte}/${posicao}\n`)
+    get(child(ref(db), `lista/${req.params.esporte}/${posicao}`)).then((snapshot) => {
         if (snapshot.exists()) {
             console.log('Dados encontrados')
             res.render('lista', { jogadores: snapshot.val(), esporte: req.params.esporte, posicao: req.params.posicao })
@@ -514,13 +525,39 @@ app.post('/escalar', isAuthenticated, async (req, res) => {
             console.log('Usuário logado acessou /escalar\n')
 
             const matricula = req.body.matricula;
-            const posicao = req.body.posicao;
+            var posicao = req.body.posicao;
             const esporte = req.body.esporte;
-
+            if (posicao == 'alaesquerda' || posicao == 'aladireita') {
+                posicao = 'ala'
+            }
+            if (posicao == 'meiadireita' || posicao == 'meiaesquerda') {
+                posicao = 'meia'
+            }
+            if (posicao == 'pontadireita' || posicao == 'pontaesquerda') {
+                posicao = 'ponta'
+            }
             get(child(ref(db), `lista/${esporte}/${posicao}/${matricula}`)).then((snapshot) => {
+                get(child(ref(db), `users/${user.uid}/escalacao/${esporte}`)).then((escalacao) => {
+                    var repetido = false
+                    if (escalacao.exists()) {
 
-                set(ref(db, `users/${user.uid}/escalacao/${esporte}/${posicao}`), snapshot.val()).then(() => {
-                    res.redirect(`/${esporte}`)
+                        Object.values(escalacao.val()).forEach((jogador) => {
+                            if (jogador.matricula == matricula) {
+                                repetido = true
+                            }
+                        })
+                    }
+                    if (repetido) {
+                        req.flash('error', 'Jogador já escalado')
+                        res.redirect(`/${esporte}`)
+                    } else {
+                        set(ref(db, `users/${user.uid}/escalacao/${esporte}/${req.body.posicao}`), snapshot.val()).then(() => {
+                            res.redirect(`/${esporte}`)
+                        }).catch((error) => {
+                            req.flash('error', 'Ocorreu um erro desconhecido, contate o suporte')
+                            res.redirect(`/${esporte}`)
+                        })
+                    }
                 }).catch((error) => {
                     req.flash('error', 'Ocorreu um erro desconhecido, contate o suporte')
                     res.redirect(`/${esporte}`)
