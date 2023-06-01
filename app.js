@@ -31,7 +31,7 @@ const storage = getStorage(firebaseApp)
 
 var mercadoAberto = false
 
-var admins = ['G6Q4p9AG6SSJhc4JhhDgYmZkNYq1']
+var admins = ['G6Q4p9AG6SSJhc4JhhDgYmZkNYq1', 'BHLO5Dr4MzLN0DNwGiAGoo9SNxo1']
 
 const defaultSet = {
     futsal: {
@@ -203,6 +203,9 @@ app.engine('handlebars', handlebars.engine({
     helpers: {
         json: function (context) {
             return JSON.stringify(context)
+        },
+        capitalize: function (context) {
+            return context.charAt(0).toUpperCase() + context.slice(1)
         }
     }
 }))
@@ -558,7 +561,8 @@ app.get('/pontuacao', isAuthenticated, async (req, res) => {
     var user = req.user
     if (admins.indexOf(user.uid) != -1) {
         console.log(`Admin ${user.uid} acessou /pontuacao (GET)\n`)
-        res.render('pontuacao')
+        var jogadores = await get(child(ref(db), 'lista'))
+        res.render('pontuacao', { jogadores: jogadores.val() })
     } else {
         console.log(`Usuário ${user.uid} tentou acessar /pontuacao (GET)\n`)
         req.flash('error', 'Você não tem permissão para acessar essa página')
@@ -573,17 +577,16 @@ app.post('/pontuacao', isAuthenticated, async (req, res) => {
         console.log(`Admin ${user.uid} acessou /pontuacao (POST)\n`)
         get(child(ref(db), `lista/${req.body.esporte}/${req.body.posicao}/${req.body.matricula}`)).then((snapshot) => {
             if (snapshot.exists()) {
-                console.log('Jogador encontrado, registrando pontuação\n')
                 const jogador = snapshot.val()
                 set(ref(db, `registro/${req.body.esporte}/${req.body.posicao}/${req.body.matricula}/${Date.now()}`), {
                     nome: jogador.nome,
                     matricula: req.body.matricula,
                     acao: req.body.acao,
-                    pontos: req.body.pontos,
+                    pontos: parseFloat(req.body.pontos),
                     admin: user.uid
                 }).then(() => {
                     console.log(`Registrados ${req.body.pontos} pontos para ${jogador.nome}, por ${req.body.acao}\n`)
-                    res.json({ success: true })
+                    res.redirect('/pontuacao')
                 }).catch((error) => {
                     res.json({ success: false, message: 'Ocorreu um erro desconhecido, contate o suporte' })
                     console.log(`Error: ${error.code} - ${error.message}`)
@@ -668,21 +671,27 @@ app.post('/pontuar', isAuthenticated, async (req, res) => {
                                         pts -= snapshot.val()
                                         get(child(ref(db), `users`)).then((snapshot_) => {
                                             Object.entries(snapshot_.val()).forEach(user => {
-                                                if (Object.values(user[1].escalacao[esporte[0]][posicao[0]]).indexOf(parseInt(matricula[0])) != -1) {
+                                                if (user[1].escalacao) {
+                                                    if (user[1].escalacao[esporte[0]]) {
+                                                        if (user[1].escalacao[esporte[0]][posicao[0]]) {
+                                                            if (Object.values(user[1].escalacao[esporte[0]][posicao[0]]).indexOf(parseInt(matricula[0])) != -1) {
 
-                                                    if (user[1].pontos == undefined || user[1].pontos == NaN) {
-                                                        user[1].pontos = 0
-                                                    }
-                                                    if (user[1].escalacao[esporte[0]].capitao.matricula == matricula[0]) {
-                                                        pts *= 1.5
-                                                    }
-                                                    user[1].pontos += pts
-                                                    set(ref(db, `users/${user[0]}/pontos`), user[1].pontos).then(() => {
-                                                        console.log(`${user[0]} pontuou ${pts} pontos`)
-                                                    }).catch((error) => {
-                                                        console.log(`Error: ${error.code} - ${error.message}`)
-                                                    })
+                                                                if (user[1].pontos == undefined || user[1].pontos == NaN) {
+                                                                    user[1].pontos = 0
+                                                                }
+                                                                if (user[1].escalacao[esporte[0]].capitao.matricula == matricula[0]) {
+                                                                    pts *= 1.5
+                                                                }
+                                                                user[1].pontos += pts
+                                                                set(ref(db, `users/${user[0]}/pontos`), user[1].pontos).then(() => {
+                                                                    console.log(`${user[0]} pontuou ${pts} pontos`)
+                                                                }).catch((error) => {
+                                                                    console.log(`Error: ${error.code} - ${error.message}`)
+                                                                })
 
+                                                            }
+                                                        }
+                                                    }
                                                 }
                                             })
                                         })
@@ -742,6 +751,47 @@ app.get('/autorizar', isAuthenticated, async (req, res) => {
     }
 })
 
+app.post('/autorizar', isAuthenticated, async (req, res) => {
+    var user = req.user
+    if (admins.indexOf(user.uid) != -1) {
+        console.log(`Admin ${user.uid} acessou /autorizar (POST)\n`)
+        var esporte = req.body.esporte
+        var equipe = req.body.equipe
+        var matricula = req.body.matricula
+        var foto = req.body.foto
+        var nome = req.body.nome
+        var numero = req.body.numero
+        var posicao = req.body.posicao
+
+        set(ref(db, `lista/${esporte}/${posicao}/${matricula}`), {
+            equipe: equipe,
+            foto: foto,
+            matricula: matricula,
+            nome: nome,
+            numero: numero,
+            posicao: posicao
+        }).then(() => {
+            set(ref(db, `jogadores/provisorio/${esporte}/${matricula}`), null).then(() => {
+                console.log(`Jogador ${nome} autorizado`)
+                req.flash('success', 'Jogador autorizado')
+                res.redirect('/autorizar')
+            }).catch((error) => {
+                console.log(`Error: ${error.code} - ${error.message}`)
+            })
+        }).catch((error) => {
+            console.log(`Error: ${error.code} - ${error.message}`)
+        })
+
+
+
+
+
+    } else {
+        console.log(`Usuário ${user.uid} tentou acessar /pontuar (POST)\n`)
+        req.flash('error', 'Você não tem permissão para fazer isso')
+        res.redirect('/')
+    }
+})
 
 //configuração da porta do servidor
 

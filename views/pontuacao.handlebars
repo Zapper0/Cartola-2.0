@@ -1,122 +1,66 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="/css/form.css">
-  <title>Pontuar</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/list.css">
+    <link rel="stylesheet" href="css/footer.css">
+    <title>Autorizar jogadores</title>
 </head>
 
-<body>
-
-  {{!--
-
-  Futsal:
-  Para os jogadores de linha (fixo, alas e pivô), as ações possíveis são:
-  - Gol - +3 pontos
-  - Assistência - +1 ponto
-  - Falta cometida - -0.5 ponto
-  - Falta sofrida - +0.5 ponto
-  - Cartão amarelo - -1 ponto
-  - Cartão vermelho - -3 pontos
-  - Gol contra - -3 pontos
-  - Gol de pênalti - +3 pontos
-  - Pênalti perdido - -1.5 pontos
-
-  Para os goleiros, as ações possíveis são:
-  - Gol sofrido - -1 ponto
-  - Defesa de pênalti - +3 pontos
-  - Falta cometida - -0.5 ponto
-  - Falta sofrida - +0.5 ponto
-  - Cartão amarelo - -1 ponto
-  - Cartão vermelho - -3 pontos
-  - Gol contra - -3 pontos
-  - Gol de pênalti - +3 pontos
-  - Pênalti perdido - -1.5 pontos
-
-  Além disso, pontuação específica para goleiros e fixos:
-  - Jogo sem sofrer gol - +3 pontos (fixo e goleiro)
-
-  Handebol:
-  Para os jogadores de linha (ponta, armador, meia e pivô), as ações possíveis são:
-  - Gol - +3 pontos
-  - Assistência - +1 ponto
-  - Falta cometida - -0.5 ponto
-  - Falta sofrida - +0.5 ponto
-  - Cartão amarelo - -1 ponto
-  - Cartão vermelho - -3 pontos
-  - Gol contra - -3 pontos
-  - Gol de 7 metros - +3 pontos
-  - 7 metros perdido - -1.5 pontos
-
-  Para os goleiros, as ações possíveis são:
-  - Gol sofrido - -1 ponto
-  - Defesa de 7 metros - +3 pontos
-  - Falta cometida - -0.5 ponto
-  - Falta sofrida - +0.5 ponto
-  - Cartão amarelo - -1 ponto
-  - Cartão vermelho - -3 pontos
-  - Gol contra - -3 pontos
-  - Gol de 7 metros - +3 pontos
-  - 7 metros perdido - -1.5 pontos
-
-  Basquete:
-  Para os jogadores de linha, as ações possíveis são:
-  - Cesta de 2 pontos - +2 pontos
-  - Cesta de 3 pontos - +3 pontos
-  - Assistência - +1 ponto
-  - Lance livre - +1 ponto
-  - Rebote ofensivo - +1 ponto
-  - Rebote defensivo - +0.5 ponto
-  - Falta cometida - -0.5 ponto
-  - Falta sofrida - +0.5 ponto
-  - Cartão amarelo - -1 ponto
-  - Cartão vermelho - -3 pontos
-
-  --}}
-
-  <form>
-    <h2>Configuração de pontuação dos jogadores</h2>
-    <input type="number" name="jogador" placeholder="Nº de matrícula" id="jogador" required>
-    <select name="esporte" id="esporte" required>
-      <option value="futsal">Futsal</option>
-      <option value="basquete">Basquete</option>
-      <option value="handebol">Handebol</option>
-    </select>
-    <select name="posicao" id="posicao" required>
-      <option value="pivo">Pivô</option>
-      <option value="fixo">Fixo</option>
-      <option value="ala">Ala</option>
-      <option value="goleiro">Goleiro</option>
-    </select>
-    <select name="acao" id="acao" required>
-      <option value="gol">Gol</option>
-      <option value="assistencia">Assistência</option>
-      <option value="falta_cometida">Falta cometida</option>
-      <option value="falta_sofrida">Falta sofrida</option>
-      <option value="cartao_amarelo">Cartão amarelo</option>
-      <option value="cartao_vermelho">Cartão vermelho</option>
-      <option value="gol_contra">Gol contra</option>
-      <option value="gol_penalti">Gol de pênalti</option>
-      <option value="penalti_perdido">Pênalti perdido</option>
-    </select>
-
-    <input type="submit" value="Pontuar">
-
-    <a onclick="javascript:history.back()">Voltar</a>
-  </form>
+<body>  
+    <div id="selects">
+        <select name="esporte" id="esporte">
+            <option value="futsal">Futsal</option>
+            <option value="basquete">Basquete</option>
+            <option value="handebol">Handebol</option>
+        </select>
+        <select name="equipe" id="equipe">
+            <option value="Amarelo/Centro-oeste">Amarelo/Centro-oeste</option>
+            <option value="Azul/Nordeste">Azul/Nordeste</option>
+            <option value="Verde/Norte">Verde/Norte</option>
+            <option value="Vermelho/Sudeste">Vermelho/Sudeste</option>
+        </select>
+    </div>
+    <div class="lista">
+        {{!-- {{#each jogadores}}
+        <div class="card">
+            <div class="jogador">
+                <div class="jogador-info">
+                    <img class="jogador-img" src={{foto}}>
+                </div>
+                <div class="jogador-info">
+                    <p class="jogador-nome jogador-texto">{{nome}}</p>
+                    <p class="jogador-pts jogador-texto">{{pontos}} pontos</p>
+                </div>
+                <div class="jogador-info jogador-texto">
+                    <p class="jogador-num jogador-texto">Nº {{numero}}</p>
+                    <p class="jogador-equipe jogador-texto">Equipe {{equipe}}</p>
+                </div>
+            </div>
+            <form action="/autorizar" method="post">
+                <input type="hidden" name="esporte" value="{{../esporte}}">
+                <input type="hidden" name="posicao" value="{{../posicao}}">
+                <input type="hidden" name="matricula" value="{{matricula}}">
+                <button type="submit" class="botao-autorizar">Autorizar</button>
+            </form>
+        </div>
+        {{/each}} --}}
+    </div>
+    <a href="/">Voltar</a>
+    <br>
 </body>
 
 <script>
-  var jogador = document.querySelector('#jogador')
-  var esporte = document.querySelector('#esporte')
-  var posicao = document.querySelector('#posicao')
-  var acao = document.querySelector('#acao')
-  var botao = document.querySelector('input[type="submit"]')
+    {{#if jogadores}}
+    var jogadores = {{{ json jogadores }}}
+    {{else}}
+    var jogadores = {}
+    {{/if}}
 
-  const pontuacoes = {
+    const pontuacoes = {
     futsal: {
       gol: 3,
       assistencia: 1,
@@ -159,49 +103,228 @@
     }
   }
 
+    var selectionEsporte = document.getElementById("esporte")
+    var selectionEquipe = document.getElementById("equipe")
 
-  function pontuar() {
-    if (!jogador.value || !esporte.value || !posicao.value || !acao.value) {
-      alert('Preencha todos os campos!')
-      return
+    function pontuar(matricula){
+        var pontos = document.getElementById(`${matricula}-pontos`)
+        var acao = document.getElementById(`${matricula}-acao`)
+        console.log(acao, pontos)
+        console.log(pontuacoes[selectionEsporte.value][acao.value])
+        pontos.value = pontuacoes[selectionEsporte.value][acao.value]
     }
-    fetch('/pontuacao', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        matricula: jogador.value,
-        esporte: esporte.value,
-        posicao: posicao.value,
-        acao: acao.value,
-        pontos: pontuacoes[esporte.value][acao.value],
-        data: Date.now()
-      })
-    }).then(function (response) {
-      console.log(response)
-      if (response.redirected) {
-        alert('Você não fez Login! Faça login para configurar pontuações.')
-        window.location.href = '/login'
-      }
-    }).then(function (data) {
-      console.log(data)
-      if(data.success){
-        alert('Pontuação adicionada com sucesso!')
-      }
-    })
-  }
-  
-  botao.addEventListener('click', function (e) {
-    e.preventDefault()
-    pontuar()
-  })
-
-  //trocar as opções de acao de acordo com o esporte e a posição
-  esporte.addEventListener('change', () => {
     
-  })
+    function updateList(){
+        var esporte = selectionEsporte.value
+        var equipe = selectionEquipe.value
+        var lista = document.getElementsByClassName("lista")[0]
+        lista.innerHTML = ""
+        var players = []
+        Object.values(jogadores[esporte]).forEach((posicao) => {
+            Object.values(posicao).forEach((jogador) => {
+                if(jogador.equipe == equipe){
+                    players.push(jogador)
+                }
+            })
+        })
+        players.forEach((jogador) => {
+            var card = `
+            <div class="card">
+                <div class="jogador">
+                    <div class="jogador-info">
+                        <div id="img">
+                        <img class="jogador-img" src=${jogador.foto}>
+                        </div>
+                    </div>
+                    <div class="jogador-info">
+                        <p class="jogador-nome jogador-texto">${jogador.nome}</p>
+                        <p class="jogador-pts jogador-texto">Matrícula: ${jogador.matricula}</p>
+                    </div>
+                    <div class="jogador-info jogador-texto">
+                        <p class="jogador-num jogador-texto">Nº ${jogador.numero}</p>
+                        <p class="jogador-equipe jogador-texto">${jogador.equipe}</p>
+                        <p class="jogador-equipe jogador-texto">${jogador.posicao.charAt(0).toUpperCase() + jogador.posicao.slice(1)}</p>
+                    </div>
+                </div>
+                <form action="/pontuacao" method="post">
+                    <select id="${jogador.matricula}-acao" class="acao" name="acao" onchange="pontuar('${jogador.matricula}')"></select>
+                    <input type="hidden" name="pontos" value="${Object.values(pontuacoes[esporte])[0]}" id="${jogador.matricula}-pontos">
+                    <input type="hidden" name="esporte" value="${esporte}">
+                    <input type="hidden" name="equipe" value="${jogador.equipe}">
+                    <input type="hidden" name="foto" value="${jogador.foto}">
+                    <input type="hidden" name="matricula" value="${jogador.matricula}">
+                    <input type="hidden" name="nome" value="${jogador.nome}">
+                    <input type="hidden" name="numero" value="${jogador.numero}">
+                    <input type="hidden" name="posicao" value="${jogador.posicao}">
+                    <button type="submit" class="botao-pontuar">Pontuar</button>
+                </form>
+            </div>
+            `
+            lista.innerHTML += card
+        })
+        var acao = document.getElementsByClassName("acao")
+        var pontos = document.getElementsByClassName("pontos")
+        Array.from(acao).forEach((element) => {
+            element.innerHTML = ""
+            pontos.innerHTML = ""
+            Object.keys(pontuacoes[esporte]).forEach((key) => {
+                var option = document.createElement("option")
+                option.value = key
+                option.text = key.charAt(0).toUpperCase() + key.slice(1).replaceAll("_", " ")
+                element.appendChild(option)
+            })
+        })
+        Array.from(pontos).forEach((element) => {
+            element.innerHTML = ""
+            Object.values(pontuacoes[esporte]).forEach((value) => {
+                var option = document.createElement("option")
+                option.value = value
+                option.text = value
+                element.appendChild(option)
+            })
+        })
+    }
+    
+    selectionEsporte.addEventListener('change', () => {updateList()})
+    selectionEquipe.addEventListener('change', () => {updateList()})
+    updateList()
 
 </script>
+
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        background-color: #535353;
+    }
+
+    a {
+        color: #fff;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 1em;
+        margin: 0.5em;
+        margin-bottom: 1em;
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 1em;
+    }
+
+    .botao-pontuar {
+        width: 6em;
+        background-color: #1212ad;
+        border: 1px solid #55ad;
+        border-radius: 5px;
+        color: #fff;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 14px;
+        font-weight: bold;
+        padding: 5px 10px;
+        margin-left: 10px;
+    }
+
+    #selects {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 10px;
+    }
+
+    select {
+        width: 80%;
+        height: 2em;
+        border-radius: 10px;
+        padding: 5px;
+        border: none;
+        background-color: #666;
+        margin: 0.2em;
+        padding: 0 0.7em;
+        color: #fff;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 1em;
+    }
+
+    .jogador-texto {
+        color: #fff;
+        font-family: Arial, Helvetica, sans-serif;
+        margin: 0;
+    }
+
+    .jogador-nome {
+        font-size: 1.3em;
+        margin: 0 0.5em 0.5em 0;
+    }
+
+    .jogador-pts {
+        font-size: 1em;
+        margin: 0 0.5em 0 0;
+    }
+
+    .jogador-equipe {
+        font-size: 1em;
+        margin: 0 0 0.5em 0;
+    }
+
+    .jogador-info {
+        padding: 5px;
+        width: 40%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .jogador-img {
+        width: 100%;
+        height: auto;
+        background-image: url("https://cdn.discordapp.com/attachments/1089033461668515850/1095162087950524637/2854274f-14d6-46a8-9bd9-382a72db6ee3.png");
+        background-size: 60px;
+        background-position: center;
+        border: 1px solid #fff;
+    }
+
+    #img{
+        width: 100px;
+        height: 100px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 100%;
+        overflow: hidden;
+    }
+
+    .jogador {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        margin: 0;
+    }
+
+    .lista {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background-color: #535353;
+        width: 100%;
+        margin: 0;
+    }
+
+    .card {
+        margin: 10px 0;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        justify-content: flex-start margin: 15px 0;
+        padding: 7px;
+        min-height: 80px;
+        width: 85vw;
+        background-color: #606060;
+        border: 2px solid #707070;
+        border-radius: 5px;
+    }
+</style>
 
 </html>

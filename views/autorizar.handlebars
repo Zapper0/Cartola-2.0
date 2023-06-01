@@ -9,10 +9,19 @@
     <link rel="stylesheet" href="css/footer.css">
     <title>Autorizar jogadores</title>
 </head>
-
+{{#if error}}
+    <script>
+        alert({{error}})
+    </script>
+{{/if}}
+{{#if success}}
+    <script>
+        alert({{success}})
+    </script>
+{{/if}}
 <body>
         <select name="esporte" id="esporte">
-            <option value="futebol">Futebol</option>
+            <option value="futsal">Futsal</option>
             <option value="basquete">Basquete</option>
             <option value="handebol">Handebol</option>
         </select>
@@ -41,7 +50,8 @@
         </div>
         {{/each}} --}}
     </div>
-    <footer></footer>
+    <a href="/">Voltar</a>
+    <br>
 </body>
 
 <script>
@@ -51,7 +61,8 @@
     var jogadores = {}
     {{/if}}
     var selection = document.getElementById("esporte")
-    selection.addEventListener('change', () => {
+    
+    function updateList(){
         var esporte = selection.value
         var lista = document.getElementsByClassName("lista")[0]
         lista.innerHTML = ""
@@ -60,7 +71,9 @@
             <div class="card">
                 <div class="jogador">
                     <div class="jogador-info">
+                        <div id="img">
                         <img class="jogador-img" src=${jogador.foto}>
+                        </div>
                     </div>
                     <div class="jogador-info">
                         <p class="jogador-nome jogador-texto">${jogador.nome}</p>
@@ -69,13 +82,14 @@
                     <div class="jogador-info jogador-texto">
                         <p class="jogador-num jogador-texto">Nº ${jogador.numero}</p>
                         <p class="jogador-equipe jogador-texto">${jogador.equipe}</p>
-                        <p class="jogador-equipe jogador-texto">${jogador.posicao}</p>
+                        <p class="jogador-equipe jogador-texto">${jogador.posicao.charAt(0).toUpperCase() + jogador.posicao.slice(1)}</p>
                     </div>
                 </div>
                 <form action="/autorizar" method="post">
                     <input type="hidden" name="esporte" value="${esporte}">
                     <input type="hidden" name="equipe" value="${jogador.equipe}">
                     <input type="hidden" name="foto" value="${jogador.foto}">
+                    <input type="hidden" name="matricula" value="${jogador.matricula}">
                     <input type="hidden" name="nome" value="${jogador.nome}">
                     <input type="hidden" name="numero" value="${jogador.numero}">
                     <input type="hidden" name="posicao" value="${jogador.posicao}">
@@ -85,7 +99,10 @@
             `
             lista.innerHTML += card
         })
-    })
+    }
+    
+    selection.addEventListener('change', () => {updateList()})
+    updateList()
 
 </script>
 
@@ -96,8 +113,20 @@
         background-color: #535353;
     }
 
+    a {
+        color: #fff;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 1em;
+        margin: 0.5em;
+        margin-bottom: 1em;
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 1em;
+    }
+
     .botao-autorizar {
-        width: 5em;
+        width: 6em;
         background-color: #1212ad;
         border: 1px solid #55ad;
         border-radius: 5px;
@@ -116,11 +145,13 @@
         padding: 5px;
         border: none;
         background-color: #666;
-        margin: 3px;
+        margin: 1em;
         padding: 0 0.7em;
         color: #fff;
         font-family: Arial, Helvetica, sans-serif;
         font-size: 1em;
+        margin-left: 50%;
+        transform: translateX(-50%);
     }
 
     .jogador-texto {
@@ -154,13 +185,22 @@
     }
 
     .jogador-img {
-        width: 70px;
-        height: 70px;
-        border-radius: 100%;
+        width: 100%;
+        height: auto;
         background-image: url("https://cdn.discordapp.com/attachments/1089033461668515850/1095162087950524637/2854274f-14d6-46a8-9bd9-382a72db6ee3.png");
         background-size: 60px;
         background-position: center;
         border: 1px solid #fff;
+    }
+
+    #img{
+        width: 100px;
+        height: 100px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 100%;
+        overflow: hidden;
     }
 
     .jogador {
@@ -178,7 +218,7 @@
         align-items: center;
         justify-content: center;
         background-color: #535353;
-        width: 100vw;
+        width: 100%;
         margin: 0;
     }
 
