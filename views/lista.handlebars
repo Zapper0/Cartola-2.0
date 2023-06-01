@@ -16,8 +16,9 @@
         <div class="card">
             <div class="jogador">
                 <div class="jogador-info">
-                    <img class="jogador-img"
-                        src={{foto}}>
+                    <div id="img">
+                        <img class="jogador-img" src={{foto}}>
+                    </div>
                 </div>
                 <div class="jogador-info">
                     <p class="jogador-nome jogador-texto">{{nome}}</p>
@@ -90,13 +91,22 @@
     }
 
     .jogador-img {
-        width: 70px;
-        height: 70px;
-        border-radius: 100%;
+        width: 100%;
+        height: auto;
         background-image: url("https://cdn.discordapp.com/attachments/1089033461668515850/1095162087950524637/2854274f-14d6-46a8-9bd9-382a72db6ee3.png");
         background-size: 60px;
         background-position: center;
         border: 1px solid #fff;
+    }
+
+    #img{
+        width: 100px;
+        height: 100px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 100%;
+        overflow: hidden;
     }
 
     .jogador {
