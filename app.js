@@ -452,11 +452,21 @@ app.get('/capitao/:esporte', isAuthenticated, async (req, res) => {
 
 app.post('/capitao', isAuthenticated, async (req, res) => {
     var user = req.user
+    var posicao = req.body.posicao
+    if (posicao == 'aladireita' || posicao == 'alaesquerda') {
+        posicao = 'ala'
+    }
+    if (posicao == 'meiadireita' || posicao == 'meiaesquerda') {
+        posicao = 'meia'
+    }
+    if (posicao == 'pontadireita' || posicao == 'pontaesquerda') {
+        posicao = 'ponta'
+    }
     console.log(`Usuário logado acessou /capitao (POST)\n`)
-    get(child(ref(db), `lista/${req.body.esporte}/${req.body.posicao}/${req.body.matricula}`)).then((snapshot) => {
+    get(child(ref(db), `lista/${req.body.esporte}/${posicao}/${req.body.matricula}`)).then((snapshot) => {
         if (snapshot.exists()) {
             var capitao = snapshot.val()
-            capitao.posicao = req.body.posicao
+            capitao.posicao = posicao
             set(ref(db, `users/${user.uid}/escalacao/${req.body.esporte}/capitao`), capitao).then(() => {
                 console.log('Capitão registrado com sucesso')
                 req.flash('error', 'Capitão registrado com sucesso')
