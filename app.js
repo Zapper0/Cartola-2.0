@@ -31,7 +31,7 @@ const storage = getStorage(firebaseApp)
 
 var mercadoAberto = false
 
-var admins = ['G6Q4p9AG6SSJhc4JhhDgYmZkNYq1', 'BHLO5Dr4MzLN0DNwGiAGoo9SNxo1']
+var admins = ['G6Q4p9AG6SSJhc4JhhDgYmZkNYq1', 'BHLO5Dr4MzLN0DNwGiAGoo9SNxo1', 'lIRRQOpvokWKG9IQohaPCFIhIn52']
 
 const defaultSet = {
     futsal: {
